@@ -1,0 +1,89 @@
+header {
+  height: 10vh;
+}
+.main_page {
+  height: 80vh;
+}
+footer {
+  height: 10vh;
+}
+/* fonts */
+.font_1 {
+  font-size: 15px;
+}
+.font_2 {
+  font-size: 13px;
+}
+/* colors */
+.color_1 {
+  color: #2c3e50;
+}
+.color_2 {
+  color: #5d6d7e;
+}
+.color_3 {
+  color: #f2f4f4;
+}
+
+.warning_logo {
+  font-size: 200px;
+}
+/* background colors */
+.bg_1 {
+  background-color: #2e86c1;
+}
+a.no-underline {
+  text-decoration: none;
+}
+a.no-underline:hover {
+  text-decoration: underline;
+}
+body {
+  background-color: #f8f9fa;
+}
+.card {
+  border: none;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  max-width: 400px; /* Set maximum width for the card */
+  margin: auto; /* Center the card */
+}
+.list-group-item {
+  border: none;
+  padding: 10px 15px; /* Adjust padding for smaller card */
+}
+.btn-custom {
+  background-color: #007bff;
+  color: white;
+}
+.btn-custom:hover {
+  background-color: #0056b3;
+}
+.text-center {
+position: relative; /* Make the container relative */
+display: flex;
+justify-content: center;
+}
+
+.text-center {
+position: relative;
+display: flex;
+justify-content: center;
+}
+
+.text-center img {
+display: block;
+margin: 0 auto;
+}
+.fas.fa-camera {
+position: absolute;
+right: 110px;
+bottom: 5px;
+background-color: rgba(0, 123, 255, 0.9); /* Slightly transparent blue */
+padding: 8px; /* Reduced padding for smaller circle */
+border-radius: 48%;
+color: white;
+cursor: pointer;
+font-size: 1.5rem; /* Smaller icon size */
+box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Optional shadow for effect */
+}
+
