@@ -120,43 +120,44 @@ $(document).ready(function() {
                             </div>
                         </div>
                     </div>
-                     <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="editModalLabel">Edit Profile</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form id="editForm" method="POST">
-    <input type="hidden" name="user_id" value="${response.user_info.u_id}"> <!-- Hidden user_id -->
-    <div class="mb-3">
-        <label for="editName" class="form-label">Name</label>
-        <input type="text" class="form-control" id="name" name="name" value="${response.user_info.name}" required>
-    </div>
-    <div class="mb-3">
-        <label for="editGender" class="form-label">Gender</label>
-        <select class="form-select" id="gender" name="gender" required>
-            <option value="Male" ${response.user_info.gender === 'Male' ? 'selected' : ''}>Male</option>
-            <option value="Female" ${response.user_info.gender === 'Female' ? 'selected' : ''}>Female</option>
-            <option value="Other" ${response.user_info.gender === 'Other' ? 'selected' : ''}>Other</option>
-        </select>
-    </div>
-    <div class="mb-3">
-        <label for="editBirthday" class="form-label">Birthday</label>
-        <input type="date" class="form-control" id="birthday" name="birthday" value="${response.user_info.birthday}" required>
-    </div>
-    <div class="mb-3">
-        <label for="editAddress" class="form-label">Address</label>
-        <input type="text" class="form-control" id="address" name="address" value="${response.user_info.address}" required>
-    </div>
-    <button type="submit" class="btn btn-primary">Save Changes</button>
-</form>
 
-            </div>
-        </div>
-    </div>
-</div>
+                     <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="editModalLabel">Edit Profile</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <form id="editForm" method="POST">
+                                        <input type="hidden" name="user_id" value="${response.user_info.u_id}"> <!-- Hidden user_id -->
+                                            <div class="mb-3">
+                                                <label for="editName" class="form-label">Name</label>
+                                                <input type="text" class="form-control" id="name" name="name" value="${response.user_info.name}" required>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="editGender" class="form-label">Gender</label>
+                                                <select class="form-select" id="gender" name="gender" required>
+                                                    <option value="Male" ${response.user_info.gender === 'Male' ? 'selected' : ''}>Male</option>
+                                                    <option value="Female" ${response.user_info.gender === 'Female' ? 'selected' : ''}>Female</option>
+                                                    <option value="Other" ${response.user_info.gender === 'Other' ? 'selected' : ''}>Other</option>
+                                                </select>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="editBirthday" class="form-label">Birthday</label>
+                                                <input type="date" class="form-control" id="birthday" name="birthday" value="${response.user_info.birthday}" required>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="editAddress" class="form-label">Address</label>
+                                                <input type="text" class="form-control" id="address" name="address" value="${response.user_info.address}" required>
+                                            </div>
+                                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                                    </form>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     `);
                     $('#editForm').on('submit', function(e) {
                         e.preventDefault(); // Prevent the default form submission
@@ -239,48 +240,47 @@ $(document).ready(function() {
                                         <div class="text-center mt-4">
                                             <button class="btn btn-custom" data-bs-toggle="modal" data-bs-target="#editModal">Edit Profile</button>
                                         </div>
+                             </div>
+                        </div>
+                    </div>
+                    <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="editModalLabel">Edit Profile</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                    <div class="modal-body">
+                                        <form id="editAdminForm" method="POST">
+                                            <input type="hidden" name="user_id" value="${response.user_info.u_id}"> <!-- Hidden user_id -->
+                                            <div class="mb-3">
+                                                <label for="editName" class="form-label">Name</label>
+                                                <input type="text" class="form-control" id="name" name="name" value="${response.user_info.name}" required>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="editGender" class="form-label">Gender</label>
+                                                <select class="form-select" id="gender" name="gender" required>
+                                                    <option value="Male" ${response.user_info.gender === 'Male' ? 'selected' : ''}>Male</option>
+                                                    <option value="Female" ${response.user_info.gender === 'Female' ? 'selected' : ''}>Female</option>
+                                                    <option value="Other" ${response.user_info.gender === 'Other' ? 'selected' : ''}>Other</option>
+                                                </select>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="editBirthday" class="form-label">Birthday</label>
+                                                <input type="date" class="form-control" id="birthday" name="birthday" value="${response.user_info.birthday}" required>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="editAddress" class="form-label">Address</label>
+                                                <input type="text" class="form-control" id="address" name="address" value="${response.user_info.address}" required>
+                                            </div>
+                                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                                        </form>
+                                    </div>
                             </div>
                         </div>
                     </div>
-                     <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="editModalLabel">Edit Profile</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form id="editForm" method="POST">
-    <input type="hidden" name="user_id" value="${response.user_info.u_id}"> <!-- Hidden user_id -->
-    <div class="mb-3">
-        <label for="editName" class="form-label">Name</label>
-        <input type="text" class="form-control" id="name" name="name" value="${response.user_info.name}" required>
-    </div>
-    <div class="mb-3">
-        <label for="editGender" class="form-label">Gender</label>
-        <select class="form-select" id="gender" name="gender" required>
-            <option value="Male" ${response.user_info.gender === 'Male' ? 'selected' : ''}>Male</option>
-            <option value="Female" ${response.user_info.gender === 'Female' ? 'selected' : ''}>Female</option>
-            <option value="Other" ${response.user_info.gender === 'Other' ? 'selected' : ''}>Other</option>
-        </select>
-    </div>
-    <div class="mb-3">
-        <label for="editBirthday" class="form-label">Birthday</label>
-        <input type="date" class="form-control" id="birthday" name="birthday" value="${response.user_info.birthday}" required>
-    </div>
-    <div class="mb-3">
-        <label for="editAddress" class="form-label">Address</label>
-        <input type="text" class="form-control" id="address" name="address" value="${response.user_info.address}" required>
-    </div>
-    <button type="submit" class="btn btn-primary">Save Changes</button>
-</form>
-
-            </div>
-        </div>
-    </div>
-</div>
                     `);
-                    $('#editForm').on('submit', function(e) {
+                    $('#editAdminForm').on('submit', function(e) {
                         e.preventDefault(); // Prevent the default form submission
                         console.log("Edit form submitted!"); // Check if this line is reached
                         var editFormData = $(this).serialize();
