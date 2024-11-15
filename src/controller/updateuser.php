@@ -16,10 +16,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $response = $controller->update_user($user_id, $name, $gender, $birthday, $address);
         echo json_encode($response); // Make sure this is in a proper JSON format
     } else {
-        echo json_encode(['status' => 'error', 'message' => 'Please fill in all fields.']);
+        echo json_encode(['status' => 'error', 'icon' => 'error', 'message' => 'Please fill in all fields.']);
     }
 } else {
-    echo json_encode(['status' => 'error', 'message' => 'Invalid request method.']);
+    echo json_encode(['status' => 'error', 'icon' => 'error', 'message' => 'Invalid request method.']);
 }
 
 ?>

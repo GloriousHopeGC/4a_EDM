@@ -16,6 +16,8 @@ $controller->session();
     <link rel="stylesheet" href="/4a_edma/public/lib/css/my.css"/>
     <link rel="stylesheet" href="/4a_edma/public/lib/css/bootstrap.min.css">
     <script defer src="/4a_edma/public/lib/js/bootstrap.bundle.min.js"></script>
+    <script defer src="/4a_edma/public/lib/js/sweetalert2.all.min.js"></script>
+    <link rel="stylesheet" href="/4a_edma/public/lib/css/sweetalert2.min.css">
 </head>
 <body>
     <div class="container d-flex justify-content-center align-items-center" style="height: 100vh;">

@@ -16,12 +16,24 @@ $(document).ready(function() {
             data: formData,
             success: function(response) {
                 if (response.status === 'success') {
+                    Swal.fire({
+                        title: 'Success',
+                        text: response.message,
+                        icon: response.icon // Use the icon from the response
+                    }).then(() => {
+                        window.location.href = 'login.php';
+                    });
                     // If registration is successful, show message and redirect
-                    alert(response.message);
-                    window.location.href = 'login.php'; // Redirect to login page
+                    // alert(response.message);
+                    // window.location.href = 'login.php'; // Redirect to login page
                 } else {
                     // If registration fails, show the error message
-                    alert(response.message);
+                    Swal.fire({
+                        title: 'Error',
+                        text: response.message,
+                        icon: response.icon // Use the icon from the response
+                    });
+                    // alert(response.message);
                 }
             },
             error: function(jqXHR, textStatus, errorThrown) {
@@ -32,42 +44,55 @@ $(document).ready(function() {
         });
     });
 
-    // Existing login form submission handler
-    $('#loginForm').on('submit', function(e) {
-        e.preventDefault(); // Prevent the form from submitting the traditional way
+   $('#loginForm').on('submit', function(e) {
+    e.preventDefault(); // Prevent the form from submitting the traditional way
 
-        console.log("Form submission intercepted!");
+    console.log("Form submission intercepted!");
 
-        // Gather form data
-        var email = $('#email').val();
-        var password = $('#password').val();
+    // Gather form data
+    var email = $('#email').val();
+    var password = $('#password').val();
 
-        // Send the form data via AJAX
-        $.ajax({
-            url: '/edma/src/controller/loginController.php', // Target the new backend file
-            type: 'POST',
-            dataType: 'json', // Expect a JSON response
-            data: {
-                email: email,
-                password: password
-            },
-            success: function(response) {
-                console.log("Response received: ", response);
-        
-                if (response.status === 'success') {
-                    alert(response.message);
+    // Send the form data via AJAX
+    $.ajax({
+        url: '/edma/src/controller/loginController.php', // Target the new backend file
+        type: 'POST',
+        dataType: 'json', // Expect a JSON response
+        data: {
+            email: email,
+            password: password
+        },
+        success: function(response) {
+            console.log("Response received: ", response);
+
+            if (response.status === 'success') {
+                Swal.fire({
+                    title: 'Success',
+                    text: response.message,
+                    icon: response.icon // Use the icon from the response
+                }).then(() => {
                     window.location.href = response.redirect_url;
-                } else {
-                    alert(response.message);
-                }
-            },
-            error: function(jqXHR, textStatus, errorThrown) {
-                console.log("AJAX error: ", textStatus, errorThrown);
-                console.log("Response Text: ", jqXHR.responseText);
-                alert('There was an error processing your request. Please try again.');
+                });
+            } else {
+                Swal.fire({
+                    title: 'Error',
+                    text: response.message,
+                    icon: response.icon // Use the icon from the response
+                });
             }
-        });
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+            console.log("AJAX error: ", textStatus, errorThrown);
+            console.log("Response Text: ", jqXHR.responseText);
+            Swal.fire({
+                title: 'Error',
+                text: 'There was an error processing your request. Please try again.',
+                icon: 'error'
+            });
+        }
     });
+});
+
 
     // Fetch user data via AJAX
     $.ajax({
@@ -91,7 +116,7 @@ $(document).ready(function() {
                                             <a class="nav-link active" aria-current="page" href="home.php">Home</a>
                                         </li>
                                         <li class="nav-item">
-                                            <a class="nav-link" href="logout.php">Logout</a> <!-- Updated Logout link -->
+                                            <a class="nav-link" href="#" onclick="confirmLogout()">Logout</a> <!-- Updated Logout link -->
                                         </li>
                                     </ul>
                                 </div>
@@ -120,7 +145,27 @@ $(document).ready(function() {
                             </div>
                         </div>
                     </div>
-
+                    <!-- Change Image Modal -->
+                    <div class="modal fade" id="changeImageModal" tabindex="-1" aria-labelledby="changeImageModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="changeImageModalLabel">Change Profile Image</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <form id="changeImageForm" method="POST" enctype="multipart/form-data">
+                                        <input type="hidden" name="user_id" value="${response.user_info.u_id}">
+                                        <div class="mb-3">
+                                            <label for="profileImage" class="form-label">Choose New Profile Image</label>
+                                            <input type="file" class="form-control" name="profileImage" id="profileImage">
+                                        </div>
+                                    <button type="submit" class="btn btn-primary">Upload Image</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                      <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
                         <div class="modal-dialog">
                             <div class="modal-content">
@@ -149,7 +194,7 @@ $(document).ready(function() {
                                             </div>
                                             <div class="mb-3">
                                                 <label for="editAddress" class="form-label">Address</label>
-                                                <input type="text" class="form-control" id="address" name="address" value="${response.user_info.address}" required>
+                                                <input type="text" class="form-control" id="address" name="address" value="${response.user_info.address}">
                                             </div>
                                             <button type="submit" class="btn btn-primary">Save Changes</button>
                                     </form>
@@ -171,10 +216,22 @@ $(document).ready(function() {
                             success: function(response) {
                                 console.log("Response received: ", response); // Check what response you are getting
                                 if (response && response.status === 'success') { // Check if response is defined
-                                    alert(response.message);
-                                    location.reload(); // Refresh the page after a successful update
+                                    Swal.fire({
+                                        title: 'Success',
+                                        text: response.message,
+                                        icon: response.icon // Use the icon from the response
+                                    }).then(() => {
+                                        location.reload();
+                                    });
+                                    // alert(response.message);
+                                    // location.reload(); // Refresh the page after a successful update
                                 } else {
-                                    alert(response.message); // Handle any error message returned
+                                    Swal.fire({
+                                        title: 'Error',
+                                        text: response.message,
+                                        icon: response.icon // Use the icon from the response
+                                    });
+                                    // alert(response.message); // Handle any error message returned
                                 }
                             },
                             error: function(jqXHR, textStatus, errorThrown) {
@@ -280,6 +337,48 @@ $(document).ready(function() {
                         </div>
                     </div>
                     `);
+                    $('#changeImageForm').on('submit', function(e) {
+                        e.preventDefault(); // Prevent the default form submission
+                    
+                        // Prepare form data including the file
+                        var formData = new FormData(this); // 'this' includes profileImage and user_id from the form
+                    
+                        $.ajax({
+                            url: '/edma/src/controller/updateProfileImage.php',
+                            type: 'POST',
+                            dataType: 'json', // Expecting JSON response
+                            data: formData,
+                            contentType: false,  // Let the browser set the content type (important for file uploads)
+                            processData: false,  // Don't process the data (important for file uploads)
+                            success: function(response) {
+                                console.log("Response from server:", response); // Log response for debugging
+                                if (response.status === 'success') {
+                                    Swal.fire({
+                                        title: 'Success',
+                                        text: response.message,
+                                        icon: response.icon // Use the icon from the response
+                                    }).then(() => {
+                                        location.reload();
+                                    });
+                                    // alert(response.message);  // Alert the success message
+                                    // location.reload();  // Reload the page to reflect the changes
+                                } else {
+                                    Swal.fire({
+                                        title: 'Error',
+                                        text: response.message,
+                                        icon: response.icon // Use the icon from the response
+                                    });
+                                    // alert(response.message);  // Show error message if upload fails
+                                }
+                            },
+                            error: function(jqXHR, textStatus, errorThrown) {
+                                console.log("AJAX error: ", textStatus, errorThrown);
+                                alert('There was an error processing your request. Please try again.');
+                            }
+                        });
+                    });
+                    
+
                     $('#editAdminForm').on('submit', function(e) {
                         e.preventDefault(); // Prevent the default form submission
                         console.log("Edit form submitted!"); // Check if this line is reached

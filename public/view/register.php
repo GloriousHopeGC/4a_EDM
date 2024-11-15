@@ -16,6 +16,8 @@ $controller->session();
     <script defer src="/4a_edma/public/lib/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <!-- Include jQuery -->
     <script src="/edma/public/lib/js/my.js"></script><!-- Include my.js -->
+    <link rel="stylesheet" href="/4a_edma/public/lib/css/sweetalert2.min.css">
+    <script defer src="/4a_edma/public/lib/js/sweetalert2.all.min.js"></script>
 </head>
 <body>
 <div class="container mt-5">
@@ -59,15 +61,15 @@ $controller->session();
                     </div>
                     <div class="mb-3">
                         <label for="email" class="form-label">Email:</label>
-                        <input type="email" id="email" name="email" class="form-control" required>
+                        <input type="email" id="email" name="email" class="form-control">
                     </div>
                     <div class="mb-3">
                         <label for="password" class="form-label">Password:</label>
-                        <input type="password" id="password" name="password" class="form-control" required>
+                        <input type="password" id="password" name="password" class="form-control">
                     </div>
                     <div class="mb-3">
                         <label for="confirm_password" class="form-label">Confirm Password:</label>
-                        <input type="password" id="confirm_password" name="confirm_password" class="form-control" required>
+                        <input type="password" id="confirm_password" name="confirm_password" class="form-control">
                     </div>
                     <button type="submit" class="btn btn-primary w-100">Register</button>
                     <a href="login.php" class="d-block text-center mt-3 no-underline">Already Have An Account?</a>

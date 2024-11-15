@@ -1,5 +1,6 @@
 <?php
-require_once '../../src/controller/database.php';
+// require_once '../../src/controller/database.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . '/edma/src/controller/database.php';
 
 class userController
 {
@@ -51,11 +52,11 @@ class userController
             $con->commit();
             
             // Send success response
-            return ['status' => 'success', 'message' => 'Registration successful! Redirecting...'];
+            return ['status' => 'success', 'icon'=>'success', 'message' => 'Registration successful! Redirecting...'];
         } catch (Exception $e) {
             // Rollback in case of an error
             $con->rollBack();
-            return ['status' => 'error', 'message' => 'Failed to register user: ' . $e->getMessage()];
+            return ['status' => 'error', 'icon'=>'error', 'message' => 'Failed to register user: ' . $e->getMessage()];
         }
     }
 
@@ -84,7 +85,7 @@ class userController
                 // Check if password and confirm password match
                 if ($password !== $confirm_password) {
                     // Send error response
-                    echo json_encode(['status' => 'error', 'message' => 'Passwords do not match.']);
+                    echo json_encode(['status' => 'error', 'icon'=>'error', 'message' => 'Passwords do not match.']);
                     exit();
                 }
     
@@ -96,7 +97,7 @@ class userController
                 exit();
             } else {
                 // Send error response
-                echo json_encode(['status' => 'error', 'message' => 'Please fill in all fields.']);
+                echo json_encode(['status' => 'error', 'icon'=>'error', 'message' => 'Please fill in all fields.']);
                 exit();
             }
         }
@@ -149,15 +150,18 @@ class userController
     
             // Return success response with a redirect URL
             echo json_encode([
+                'icon' => 'success',
                 'status' => 'success',
                 'message' => 'Login successful! Redirecting...',
                 'redirect_url' => ($user['role'] == 2) ? 'admin.php' : 'home.php'
+                
             ]);
         } else {
             // If login fails, return an error response
             echo json_encode([
                 'status' => 'error',
-                'message' => 'Invalid email or password.'
+                'message' => 'Invalid email or password.',
+                'icon' => 'error'
             ]);
         }
     
@@ -230,14 +234,34 @@ public function update_user($user_id, $name, $gender, $birthday, $address)
         $stmt->bindParam(':u_id', $user_id);
         
         if ($stmt->execute()) {
-            return ['status' => 'success', 'message' => 'Profile updated successfully!'];
+            return ['status' => 'success', 'icon' => 'success', 'message' => 'Profile updated successfully!'];
         } else {
-            return ['status' => 'error', 'message' => 'Failed to update profile.'];
+            return ['status' => 'error', 'icon' => 'error', 'message' => 'Failed to update profile.'];
         }
     } catch (Exception $e) {
-        return ['status' => 'error', 'message' => 'Error: ' . $e->getMessage()];
+        return ['status' => 'error', 'icon' => 'error', 'message' => 'Error: ' . $e->getMessage()];
     }
 }
+public function logout(){
+    session_start(); // Start the session
+    session_unset(); // Unset all session variables
+    session_destroy(); // Destroy the session
+    header('Location: login.php'); // Redirect to login
+    exit();
+}
+//calles and handle the logout function if triggered logout
+public function handleLogoutAction(){
+// Check if logout has been requested
+if (isset($_GET['action']) && $_GET['action'] === 'logout') {
+    $this->logout(); // Call the logout method
+}
+}
+// public function updateUserProfileImage($userId, $imageName) {
+//     // Assume $this->db is your database connection
+//     $query = "UPDATE user_info SET image_name = ? WHERE u_id = ?";
+//     $stmt = $this->db->prepare($query);
+//     return $stmt->execute([$imageName, $userId]);
+// }
 
 }
 ?>
