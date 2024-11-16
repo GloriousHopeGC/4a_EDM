@@ -141,10 +141,41 @@ $(document).ready(function() {
                                         </ul>
                                         <div class="text-center mt-4">
                                             <button class="btn btn-custom" data-bs-toggle="modal" data-bs-target="#editModal">Edit Profile</button>
+                                            <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#changePassword">Change Password</button>
                                         </div>
                             </div>
                         </div>
                     </div>
+                    <!-- Change Password Modal -->
+                    <div class="modal fade" id="changePassword" tabindex="-1" aria-labelledby="changePasswordLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="changePasswordLabel">Change Password</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                    <div class="modal-body">
+                                        <form id="changePasswordForm" method="POST">
+                                            <input type="hidden" name="user_id" value="${response.user_info.u_id}">
+                                             <div class="mb-3">
+                                                <label for="currentPassword" class="form-label">Current Password</label>
+                                                <input type="password" class="form-control" id="currentPassword" name="currentPassword" required>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="newPassword" class="form-label">New Password</label>
+                                                <input type="password" class="form-control" id="newPassword" name="newPassword" required>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="confirmPassword" class="form-label">Confirm New Password</label>
+                                                <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
+                                            </div>
+                                                    <button type="submit" class="btn btn-primary">Change Password</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                     <!-- Change Image Modal -->
                     <div class="modal fade" id="changeImageModal" tabindex="-1" aria-labelledby="changeImageModalLabel" aria-hidden="true">
                         <div class="modal-dialog">
@@ -166,6 +197,7 @@ $(document).ready(function() {
                             </div>
                         </div>
                     </div>
+                    <!-- Edit Profile -->
                      <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
                         <div class="modal-dialog">
                             <div class="modal-content">
@@ -250,6 +282,53 @@ $(document).ready(function() {
         }
     });
 
+    
+    $(document).on('submit', '#changePasswordForm', function(e)
+    /* $('#changePasswordForm').on('submit', function(e)*/ {
+        e.preventDefault(); // Prevent the default form submission
+        console.log('Form submitted, method is POST');
+        const formData = $(this).serialize(); // Serialize the form data
+        console.log('Form Data:', formData); // Check what is being sent
+        
+        $.ajax({
+            url: 'http://localhost/edma/src/controller/change_password.php',// Correct path
+            type: 'POST', // Ensure POST method is used
+            dataType: 'json', // Expect JSON response
+            data: formData, // Send serialized form data
+            success: function(response) {
+                console.log('Response:', response);
+                if (response.success) {
+                    Swal.fire({
+                        title: 'Success',
+                        text: 'Password changed successfully!',
+                        icon: 'success'
+                    }).then(() => {
+                        location.reload();
+                    });
+                } else {
+                    Swal.fire({
+                        title: 'Error',
+                        text: response.error || 'An error occurred.',
+                        icon: 'error'
+                    });
+                }
+            },
+            error: function(xhr, status, error) {
+                // Handle AJAX errors
+                console.log('AJAX Error:', status, error);
+                Swal.fire({
+                    title: 'Error',
+                    text: 'An error occurred while processing your request.',
+                    icon: 'error'
+                });
+            }
+        });
+    });
+   
+   
+    
+    
+    
     $.ajax({
         url: '/edma/src/controller/fetchdata.php',
         type: 'GET',
@@ -298,6 +377,27 @@ $(document).ready(function() {
                                             <button class="btn btn-custom" data-bs-toggle="modal" data-bs-target="#editModal">Edit Profile</button>
                                         </div>
                              </div>
+                        </div>
+                    </div>
+                     <!-- Change Image Modal -->
+                    <div class="modal fade" id="changeImageModal" tabindex="-1" aria-labelledby="changeImageModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="changeImageModalLabel">Change Profile Image</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <form id="changeImageForm" method="POST" enctype="multipart/form-data">
+                                        <input type="hidden" name="user_id" value="${response.user_info.u_id}">
+                                        <div class="mb-3">
+                                            <label for="profileImage" class="form-label">Choose New Profile Image</label>
+                                            <input type="file" class="form-control" name="profileImage" id="profileImage">
+                                        </div>
+                                    <button type="submit" class="btn btn-primary">Upload Image</button>
+                                    </form>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">

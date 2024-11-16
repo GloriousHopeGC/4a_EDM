@@ -28,6 +28,9 @@ $user_info = $userData['user_info'];
     <link rel="stylesheet" href="/edma/public/lib/css/edit.css">
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="/edma/public/lib/js/my.js"></script>
+    <script src="/4a_edma/public/lib/js/swal.js"></script>
+    <link rel="stylesheet" href="/4a_edma/public/lib/css/sweetalert2.min.css">
+    <script defer src="/4a_edma/public/lib/js/sweetalert2.all.min.js"></script>
 </head>
 <body>
     <nav id="userAdmin"></nav>

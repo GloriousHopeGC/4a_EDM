@@ -183,8 +183,7 @@ class userController
         exit();
         }
     }
-    public function getUserData()
-{
+    public function getUserData(){
     $db = new database();
     $con = $db->initDatabase();
 
@@ -219,8 +218,8 @@ class userController
         return ['error' => 'User not logged in.'];
     }
 }
-public function update_user($user_id, $name, $gender, $birthday, $address)
-{
+    public function update_user($user_id, $name, $gender, $birthday, $address)
+    {
     $db = new database();
     $con = $db->initDatabase();
 
@@ -233,15 +232,15 @@ public function update_user($user_id, $name, $gender, $birthday, $address)
         $stmt->bindParam(':address', $address);
         $stmt->bindParam(':u_id', $user_id);
         
-        if ($stmt->execute()) {
+            if ($stmt->execute()) {
             return ['status' => 'success', 'icon' => 'success', 'message' => 'Profile updated successfully!'];
-        } else {
-            return ['status' => 'error', 'icon' => 'error', 'message' => 'Failed to update profile.'];
+            } else {
+                return ['status' => 'error', 'icon' => 'error', 'message' => 'Failed to update profile.'];
+            }
+            } catch (Exception $e) {
+            return ['status' => 'error', 'icon' => 'error', 'message' => 'Error: ' . $e->getMessage()];
         }
-    } catch (Exception $e) {
-        return ['status' => 'error', 'icon' => 'error', 'message' => 'Error: ' . $e->getMessage()];
     }
-}
 public function logout(){
     session_start(); // Start the session
     session_unset(); // Unset all session variables
@@ -256,12 +255,5 @@ if (isset($_GET['action']) && $_GET['action'] === 'logout') {
     $this->logout(); // Call the logout method
 }
 }
-// public function updateUserProfileImage($userId, $imageName) {
-//     // Assume $this->db is your database connection
-//     $query = "UPDATE user_info SET image_name = ? WHERE u_id = ?";
-//     $stmt = $this->db->prepare($query);
-//     return $stmt->execute([$imageName, $userId]);
-// }
-
 }
 ?>
