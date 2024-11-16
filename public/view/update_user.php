@@ -32,6 +32,7 @@ $controller->handleLogoutAction();
     <script src="/4a_edma/public/lib/js/swal.js"></script>
     <link rel="stylesheet" href="/4a_edma/public/lib/css/sweetalert2.min.css">
     <script defer src="/4a_edma/public/lib/js/sweetalert2.all.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 </head>
 <body>
     <nav id="userData"></nav>
