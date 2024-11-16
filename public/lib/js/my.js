@@ -399,6 +399,7 @@ $(document).ready(function() {
                                         </ul>
                                         <div class="text-center mt-4">
                                             <button class="btn btn-custom" data-bs-toggle="modal" data-bs-target="#editModal">Edit Profile</button>
+                                            <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#changePassword">Change Password</button>
                                         </div>
                              </div>
                         </div>
@@ -424,6 +425,35 @@ $(document).ready(function() {
                             </div>
                         </div>
                     </div>
+                    <!-- Change Password Modal -->
+                    <div class="modal fade" id="changePassword" tabindex="-1" aria-labelledby="changePasswordLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="changePasswordLabel">Change Password</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                    <div class="modal-body">
+                                        <form id="changePasswordForm" method="POST">
+                                            <input type="hidden" name="user_id" value="${response.user_info.u_id}">
+                                             <div class="mb-3">
+                                                <label for="currentPassword" class="form-label">Current Password</label>
+                                                <input type="password" class="form-control" id="currentPassword" name="currentPassword" required>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="newPassword" class="form-label">New Password</label>
+                                                <input type="password" class="form-control" id="newPassword" name="newPassword" required>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="confirmPassword" class="form-label">Confirm New Password</label>
+                                                <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
+                                            </div>
+                                                    <button type="submit" class="btn btn-primary">Change Password</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
                         <div class="modal-dialog">
                             <div class="modal-content">
@@ -452,7 +482,7 @@ $(document).ready(function() {
                                             </div>
                                             <div class="mb-3">
                                                 <label for="editAddress" class="form-label">Address</label>
-                                                <input type="text" class="form-control" id="address" name="address" value="${response.user_info.address}" required>
+                                                <input type="text" class="form-control" id="address" name="address" value="${response.user_info.address}">
                                             </div>
                                             <button type="submit" class="btn btn-primary">Save Changes</button>
                                         </form>
@@ -515,10 +545,22 @@ $(document).ready(function() {
                             success: function(response) {
                                 console.log("Response received: ", response); // Check what response you are getting
                                 if (response && response.status === 'success') { // Check if response is defined
-                                    alert(response.message);
-                                    location.reload(); // Refresh the page after a successful update
+                                    Swal.fire({
+                                        title: 'Success',
+                                        text: response.message,
+                                        icon: response.icon // Use the icon from the response
+                                    }).then(() => {
+                                        location.reload();
+                                    });
+                                    // alert(response.message);
+                                    // location.reload(); // Refresh the page after a successful update
                                 } else {
-                                    alert(response.message); // Handle any error message returned
+                                    Swal.fire({
+                                        title: 'Error',
+                                        text: response.message,
+                                        icon: response.icon // Use the icon from the response
+                                    });
+                                    // alert(response.message); // Handle any error message returned
                                 }
                             },
                             error: function(jqXHR, textStatus, errorThrown) {
