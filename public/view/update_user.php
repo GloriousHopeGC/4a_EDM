@@ -6,11 +6,13 @@ $userData = $controller->getUserData();
 if (isset($userData['error'])) {
     // Handle the error (e.g., user not found or not logged in)
     echo "<p>" . htmlspecialchars($userData['error']) . "</p>";
+    header('Location: login.php'); // Redirect to login if not logged in
     exit();
 }
 $user = $userData['user'];
 $user_info = $userData['user_info'];
 $controller->handleLogoutAction(); 
+
 ?>
 
 <!DOCTYPE html>

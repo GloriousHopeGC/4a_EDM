@@ -1,6 +1,6 @@
 <?php
-// require_once '../../src/controller/database.php';
-require_once $_SERVER['DOCUMENT_ROOT'] . '/edma/src/controller/database.php';
+require_once '../../src/controller/database.php';
+// require_once $_SERVER['DOCUMENT_ROOT'] . '/edma/src/controller/database.php';
 
 class userController
 {
@@ -241,6 +241,7 @@ class userController
             return ['status' => 'error', 'icon' => 'error', 'message' => 'Error: ' . $e->getMessage()];
         }
     }
+    
 public function logout(){
     session_start(); // Start the session
     session_unset(); // Unset all session variables
@@ -255,5 +256,8 @@ if (isset($_GET['action']) && $_GET['action'] === 'logout') {
     $this->logout(); // Call the logout method
 }
 }
+
+
+
 }
 ?>

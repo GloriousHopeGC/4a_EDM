@@ -153,8 +153,19 @@ $(document).ready(function() {
                                             <li class="list-group-item"><strong>Address:</strong> ${response.user_info.address}</li>
                                         </ul>
                                         <div class="text-center mt-4">
-                                            <button class="btn btn-custom" data-bs-toggle="modal" data-bs-target="#editModal">Edit Profile</button>
+                                        <li class="nav-item dropdown d-block d-lg-block">
+                                            <a class="nav-link dropdown-toggle" href="#" id="settingsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                               <i class="bi bi-gear"></i> Account Settings
+                                            </a>
+                                            <ul class="dropdown-menu" aria-labelledby="settingsDropdown"  style="cursor: pointer;">
+                                                <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#editModal"><i class="bi bi-pencil"></i> Edit Profile</a></li>
+                                                <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#changePassword"><i class="bi bi-key"></i> Change Password</a></li>
+                                                 <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#changeEmailModal"><i class="bi bi-envelope"></i> Change Email</a></li>
+                                            </ul>
+                                        </li>
+                                           <!-- <button class="btn btn-custom" data-bs-toggle="modal" data-bs-target="#editModal">Edit Profile</button>
                                             <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#changePassword">Change Password</button>
+                                            <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#changeEmailModal">Change Email</button>  -->
                                         </div>
                             </div>
                         </div>
@@ -188,6 +199,27 @@ $(document).ready(function() {
                                 </div>
                             </div>
                         </div>
+                    <!-- Change Email Modal -->
+<div class="modal fade" id="changeEmailModal" tabindex="-1" aria-labelledby="changeEmailLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="changeEmailLabel">Change Email</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="changeEmailForm" method="POST">
+                    <input type="hidden" name="user_id" id="user_id" value="${response.user_info.u_id}">
+                    <div class="mb-3">
+                        <label for="newEmail" class="form-label">New Email</label>
+                        <input type="email" class="form-control" id="newEmail" name="newEmail" >
+                    </div>
+                    <button type="submit" class="btn btn-primary">Update Email</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 
                     <!-- Change Image Modal -->
                     <div class="modal fade" id="changeImageModal" tabindex="-1" aria-labelledby="changeImageModalLabel" aria-hidden="true">
@@ -249,6 +281,7 @@ $(document).ready(function() {
                         </div>
                     </div>
                     `);
+                    
                     $('#editForm').on('submit', function(e) {
                         e.preventDefault(); // Prevent the default form submission
                         console.log("Edit form submitted!"); // Check if this line is reached
@@ -294,7 +327,7 @@ $(document).ready(function() {
             $('#userData').html('<div class="alert alert-danger">Failed to fetch user data.</div>');
         }
     });
-
+    
     
     $(document).on('submit', '#changePasswordForm', function(e)
     /* $('#changePasswordForm').on('submit', function(e)*/ {
@@ -338,9 +371,45 @@ $(document).ready(function() {
         });
     });
    
-   
+    $(document).on('submit', '#changeEmailForm', function (e) {
+        e.preventDefault(); // Prevent default form submission
+        const formData = $(this).serialize(); // Serialize form data for AJAX
     
+        console.log('Email Change Request:', formData); // Debugging: Check data being sent
     
+        $.ajax({
+            url: '/edma/src/controller/change_email.php', // Backend controller for email change
+            type: 'POST', // Use POST to securely send data
+            dataType: 'json', // Expect JSON response
+            data: formData, // Send serialized form data
+            success: function (response) {
+                console.log('Response:', response); // Debugging: Check the response
+                if (response.status === 'success') {
+                    Swal.fire({
+                        title: 'Success',
+                        text: response.message,
+                        icon: 'success'
+                    }).then(() => {
+                        location.reload(); // Reload to update UI or fetch updated data
+                    });
+                } else {
+                    Swal.fire({
+                        title: 'Error',
+                        text: response.message || 'An error occurred.',
+                        icon: 'error'
+                    });
+                }
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.log('AJAX Error:', textStatus, errorThrown);
+                Swal.fire({
+                    title: 'Error',
+                    text: 'An error occurred while processing your request.',
+                    icon: 'error'
+                });
+            }
+        });
+    });
     
     $.ajax({
         url: '/edma/src/controller/fetchdata.php',
@@ -402,6 +471,7 @@ $(document).ready(function() {
                                         <div class="text-center mt-4">
                                             <button class="btn btn-custom" data-bs-toggle="modal" data-bs-target="#editModal">Edit Profile</button>
                                             <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#changePassword">Change Password</button>
+                                            <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#changeEmail">Change Email</button>
                                         </div>
                              </div>
                         </div>
