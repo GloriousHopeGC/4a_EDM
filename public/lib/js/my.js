@@ -312,93 +312,173 @@ $(document).ready(function() {
                                 <div id="postsList"></div>
                             </div>
                         `);
-                        // Fetch and display posts
-                        function fetchPosts() {
-                            $.ajax({
-                                url: '/edma/src/controller/fetch_post.php',
-                                type: 'GET',
-                                dataType: 'json',
-                                success: function(response) {
-                                    if (response.status === 'success') {
-                                        const posts = response.posts;
-                                        let postsHtml = '';
+                            // Fetch posts
+                            $(document).ready(function() {
+                                // Fetch posts
+                                function fetchPosts() {
+                                    $.ajax({
+                                        url: '/edma/src/controller/fetch_post.php',
+                                        type: 'GET',
+                                        dataType: 'json',
+                                        success: function(response) {
+                                            if (response.status === 'success') {
+                                                const posts = response.posts;
+                                                let postsHtml = '';
+                                                const currentUserId = $('meta[name="current-user-id"]').attr('content'); // Assuming a meta tag for user ID
+                                                console.log('Current User ID:', currentUserId);
+                            
+                                                if (posts.length > 0) {
+                                                    posts.forEach(post => {
+                                                        const formattedDate = formatDateTo12Hour(post.created_at);
+                            
+                                                        postsHtml += `
+                                                       <div class="card mb-3" style="max-width: 540px; margin: auto;">
+                                                        <div class="card-body">
+                                                            <!-- Admin Info -->
+                                                            <div class="d-flex align-items-center mb-3">
+                                                                <img src="../../public/lib/images/user_profile/${post.image_name}" alt="${post.admin_name}" class="img-fluid rounded-circle" style="width: 40px; height: 40px; margin-right: 10px;">
+                                                                <h5 class="card-title text-truncate">${post.admin_name || 'Unknown'}</h5>
+                                                            </div>
                         
-                                        if (posts.length > 0) {
-                                            posts.forEach(post => {
-                                                const formattedDate = formatDateTo12Hour(post.created_at); // Call the format function
+                                                            <!-- Post Content -->
+                                                            <p class="card-text text-truncate">${post.content}</p>
+                                                            <small class="text-muted d-block mb-3">Posted on ${formattedDate}</small>
                         
-                                                postsHtml += `
-                                                <div class="card mb-3" style="max-width: 540px; margin: auto;">
-    <div class="card-body">
-        <!-- Admin Info -->
-        <div class="d-flex align-items-center mb-3">
-            <img src="../../public/lib/images/user_profile/${post.image_name}" alt="${post.admin_name}" class="img-fluid rounded-circle" style="width: 40px; height: 40px; margin-right: 10px;">
-            <h5 class="card-title text-truncate">${post.admin_name || 'Unknown'}</h5>
-        </div>
-        
-        <!-- Post Content -->
-        <p class="card-text text-truncate">${post.content}</p>
-        <small class="text-muted d-block mb-3">Posted on ${formattedDate}</small>
-
-        <!-- Media Display -->
-        ${post.file_name && post.file_type.startsWith('image/') ? 
-            `<img src="../../public/lib/images/posts/${post.file_name}" alt="${post.title}" class="img-fluid rounded mb-3 full-width-media">`
-        : post.file_type === 'video/mp4' ? 
-            `<video controls class="w-100 rounded mb-3 full-width-media">
-                <source src="../../public/lib/images/posts/${post.file_name}" type="video/mp4">
-                Your browser does not support the video tag.
-            </video>`
-        : post.file_type === 'audio/mpeg' || post.file_type === 'audio/wav' ? 
-            `<audio controls class="w-100 rounded mb-3 full-width-media">
-                <source src="../../public/lib/images/posts/${post.file_name}" type="${post.file_type}">
-                Your browser does not support the audio element.
-            </audio>`
-        : post.file_name && 
-            (post.file_type === 'application/pdf' || 
-            post.file_type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' || 
-            post.file_type === 'application/vnd.openxmlformats-officedocument.presentationml.presentation') ?
-            `<p class="mb-0"><strong>${post.file_name.replace(/^\d+_/, '')}</strong></p>
-            <a href="../../public/lib/images/posts/${post.file_name}" target="_blank" class="btn btn-link">Download File</a>`
-        : post.file_name ? 
-            `<p class="mb-0">
-                <a href="../../public/lib/images/posts/${post.file_name}" target="_blank" class="btn btn-link">Download File</a>
-            </p>`
-        : ''}
-    </div>
-</div>
-`;
-                                            });
-                                        } else {
-                                            postsHtml = '<p>No posts available.</p>';
+                                                            <!-- Media Display -->
+                                                            ${post.file_name && post.file_type.startsWith('image/') ? 
+                                                                `<img src="../../public/lib/images/posts/${post.file_name}" alt="${post.title}" class="img-fluid rounded mb-3 full-width-media">`
+                                                            : post.file_type === 'video/mp4' ? 
+                                                                `<video controls class="w-100 rounded mb-3 full-width-media">
+                                                                    <source src="../../public/lib/images/posts/${post.file_name}" type="video/mp4">
+                                                                    Your browser does not support the video tag.
+                                                                </video>`
+                                                            : post.file_type === 'audio/mpeg' || post.file_type === 'audio/wav' ? 
+                                                                `<audio controls class="w-100 rounded mb-3 full-width-media">
+                                                                    <source src="../../public/lib/images/posts/${post.file_name}" type="${post.file_type}">
+                                                                    Your browser does not support the audio element.
+                                                                </audio>`
+                                                            : post.file_name && 
+                                                                (post.file_type === 'application/pdf' || 
+                                                                post.file_type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' || 
+                                                                post.file_type === 'application/vnd.openxmlformats-officedocument.presentationml.presentation') ?
+                                                                `<p class="mb-0"><strong>${post.file_name.replace(/^\d+_/, '')}</strong></p>
+                                                                <a href="../../public/lib/images/posts/${post.file_name}" target="_blank" class="btn btn-link">Download File</a>`
+                                                            : post.file_name ? 
+                                                                `<p class="mb-0">
+                                                                    <a href="../../public/lib/images/posts/${post.file_name}" target="_blank" class="btn btn-link">Download File</a>
+                                                                </p>`
+                                                            : ''}
+                                                                    <input type="hidden" name="user_id" value="${post.u_id}">
+                                                                   
+                            
+                                                                <!-- Dropdown for delete action (visible only to matching user) -->
+                                                                ${post.u_id == currentUserId ? `
+                                                                    <div class="dropdown position-absolute top-0 end-0 p-2">
+                                                                   <i class="bi bi-three-dots mr-3" style="font-size: 20px;" dropdown-toggle="true" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false"></i>
+                                                                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                                                            <li><a class="dropdown-item delete-post" href="#" data-post-id="${post.post_id}">Delete</a></li>
+                                                                        </ul>
+                                                                    </div>
+                                                                ` : ''}
+                                                            </div>
+                                                        </div>
+                                                        `;
+                                                    });
+                                                } else {
+                                                    postsHtml = '<p>No posts available.</p>';
+                                                }
+                            
+                                                $('#postsList').html(postsHtml);
+                                            } else {
+                                                console.error('Error fetching posts:', response.message);
+                                            }
+                                        },
+                                        error: function(jqXHR, textStatus, errorThrown) {
+                                            console.error("AJAX error: ", textStatus, errorThrown);
                                         }
+                                    });
+                            }
                         
-                                        $('#postsList').html(postsHtml);
-                                    } else {
-                                        console.error('Error fetching posts:', response.message);
-                                    }
-                                },
-                                error: function(jqXHR, textStatus, errorThrown) {
-                                    console.error("AJAX error: ", textStatus, errorThrown);
+                            // Function to format date to 12-hour format
+                            function formatDateTo12Hour(dateString) {
+                                const date = new Date(dateString);
+                                const options = { 
+                                    year: 'numeric', 
+                                    month: 'long', 
+                                    day: 'numeric', 
+                                    hour: 'numeric', 
+                                    minute: '2-digit',  
+                                    hour12: true 
+                                };
+                                return date.toLocaleString('en-US', options);
+                            }
+                        // Function to delete a post
+                        function deletePost(postId) {
+                            console.log("Deleting post with ID:", postId); // Log the ID before making the AJAX call
+                        
+                            // Confirm deletion using SweetAlert
+                            Swal.fire({
+                                title: 'Are you sure?',
+                                text: 'Do you really want to delete this post? This action cannot be undone.',
+                                icon: 'warning',
+                                showCancelButton: true,
+                                confirmButtonText: 'Yes, delete it!',
+                                cancelButtonText: 'Cancel',
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    // Proceed with deletion if confirmed
+                                    $.ajax({
+                                        url: '/edma/src/controller/delete_post.php',
+                                        type: 'POST',
+                                        data: { id: postId },
+                                        dataType: 'json', // Ensures the response is parsed as JSON
+                                        success: function(response) {
+                                            console.log("Response from server:", response); // Debug response
+                        
+                                            if (response.status === 'success') {
+                                                Swal.fire({
+                                                    title: 'Deleted!',
+                                                    text: 'Post deleted successfully!',
+                                                    icon: 'success',
+                                                    confirmButtonText: 'OK',
+                                                });
+                        
+                                                fetchPosts(); // Refresh the posts list after deletion
+                                            } else {
+                                                const errorMessage = response.message || 'Unknown error';
+                                                Swal.fire({
+                                                    title: 'Error',
+                                                    text: 'Error deleting post: ' + errorMessage,
+                                                    icon: 'error',
+                                                    confirmButtonText: 'OK',
+                                                });
+                                            }
+                                        },
+                                        error: function(jqXHR, textStatus, errorThrown) {
+                                            console.error("AJAX error while deleting post: ", textStatus, errorThrown);
+                                            Swal.fire({
+                                                title: 'Error',
+                                                text: 'AJAX error: ' + textStatus,
+                                                icon: 'error',
+                                                confirmButtonText: 'OK',
+                                            });
+                                        },
+                                    });
                                 }
                             });
                         }
                         
-                        // Function to format date to 12-hour format
-                        function formatDateTo12Hour(dateString) {
-                            const date = new Date(dateString);
-                            const options = { 
-                                year: 'numeric', 
-                                month: 'long', 
-                                day: 'numeric', 
-                                hour: 'numeric', 
-                                minute: '2-digit',  
-                                hour12: true 
-                            };
-                            return date.toLocaleString('en-US', options);
-                        }
+                        // Use event delegation to handle clicks for dynamic elements
+                        $(document).on('click', '.delete-post', function(e) {
+                            e.preventDefault(); // Prevent default anchor behavior
+                            const postId = $(this).data('post-id'); // Retrieve post ID
+                            deletePost(postId);
+                        });
                         
-                        // Fetch posts on page load
-                        fetchPosts();
+
+                            fetchPosts();
+                        });
+                        
                         
                         
                         $('#postForm').on('submit', function(e) {
