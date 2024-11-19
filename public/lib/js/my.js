@@ -357,12 +357,12 @@ $(document).ready(function() {
                                                                     <source src="../../public/lib/images/posts/${post.file_name}" type="${post.file_type}">
                                                                     Your browser does not support the audio element.
                                                                 </audio>`
-                                                            : post.file_name && 
+                                                                : post.file_name && 
                                                                 (post.file_type === 'application/pdf' || 
                                                                 post.file_type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' || 
                                                                 post.file_type === 'application/vnd.openxmlformats-officedocument.presentationml.presentation') ?
-                                                                `<p class="mb-0"><strong>${post.file_name.replace(/^\d+_/, '')}</strong></p>
-                                                                <a href="../../public/lib/images/posts/${post.file_name}" target="_blank" class="btn btn-link">Download File</a>`
+                                                                // Check file type and display its name instead of "Download File"
+                                                                `<a href="../../public/lib/images/posts/${post.file_name}"target="_blank" class="btn btn-link">${post.file_name.replace(/^\d+_/, '')}</a>`
                                                             : post.file_name ? 
                                                                 `<p class="mb-0">
                                                                     <a href="../../public/lib/images/posts/${post.file_name}" target="_blank" class="btn btn-link">Download File</a>
