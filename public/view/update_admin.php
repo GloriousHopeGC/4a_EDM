@@ -11,6 +11,7 @@ if (isset($userData['error'])) {
 $user = $userData['user'];
 $user_info = $userData['user_info'];
 $controller->handleLogoutAction(); 
+$controller->sessionAdmin(); 
 ?>
 
 <!DOCTYPE html>

@@ -145,6 +145,9 @@ $(document).ready(function() {
                                         <img src="../lib/images/user_profile/${response.user_info.image_name}" alt="User Image" class="rounded-circle" style="width: 150px; height: 150px; object-fit: cover;" data-bs-toggle="modal" data-bs-target="#changeImageModal">
                                             <i class="fas fa-camera fa-2x" data-bs-toggle="modal" data-bs-target="#changeImageModal" style="cursor: pointer;"></i>
                                     </div>
+                                    <div class="text-center">
+                                            <p id="dummyText">Id: ${(response.user_info.u_id).toString().padStart(5, '0')}-${(new Date(response.user_info.created).getMonth() + 1).toString().padStart(3, '0')}-${new Date(response.user_info.created).getFullYear()}</p>
+                                          </div>
                                         <ul class="list-group list-group-flush">
                                             <li class="list-group-item"><strong>Name:</strong> ${response.user_info.name}</li>
                                             <li class="list-group-item"><strong>Email:</strong>  ${response.user.email}</li>
@@ -281,7 +284,179 @@ $(document).ready(function() {
                         </div>
                     </div>
                     `);
+
+                        $('#adminPost').html(`
+                            <div class="container mt-5">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <form id="postForm" method="POST" enctype="multipart/form-data">
+                                            <input type="hidden" name="u_id" value="${response.user_info.u_id}">
+                                            <input type="hidden" name="ui_id" value="${response.user_info.id}">
+                                            <div class="mb-3">
+                                                <label for="postContent" class="form-label">Create Post</label>
+                                                <textarea class="form-control" id="postContent" name="postContent" rows="4"></textarea>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="postFile" class="form-label">Upload File</label>
+                                                <input type="file" class="form-control" id="postFile" name="postFile">
+                                            </div>
+                                            <button type="submit" class="btn btn-primary">Create Post</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                           
+                        `);
+                        $('#adminPostlist').html(`
+                           <div id="postsContainer" class="mt-5">
+                                <div id="postsList"></div>
+                            </div>
+                        `);
+                        // Fetch and display posts
+                        function fetchPosts() {
+                            $.ajax({
+                                url: '/edma/src/controller/fetch_post.php',
+                                type: 'GET',
+                                dataType: 'json',
+                                success: function(response) {
+                                    if (response.status === 'success') {
+                                        const posts = response.posts;
+                                        let postsHtml = '';
+                        
+                                        if (posts.length > 0) {
+                                            posts.forEach(post => {
+                                                const formattedDate = formatDateTo12Hour(post.created_at); // Call the format function
+                        
+                                                postsHtml += `
+                                                <div class="card mb-3" style="max-width: 540px; margin: auto;">
+    <div class="card-body">
+        <!-- Admin Info -->
+        <div class="d-flex align-items-center mb-3">
+            <img src="../../public/lib/images/user_profile/${post.image_name}" alt="${post.admin_name}" class="img-fluid rounded-circle" style="width: 40px; height: 40px; margin-right: 10px;">
+            <h5 class="card-title text-truncate">${post.admin_name || 'Unknown'}</h5>
+        </div>
+        
+        <!-- Post Content -->
+        <p class="card-text text-truncate">${post.content}</p>
+        <small class="text-muted d-block mb-3">Posted on ${formattedDate}</small>
+
+        <!-- Media Display -->
+        ${post.file_name && post.file_type.startsWith('image/') ? 
+            `<img src="../../public/lib/images/posts/${post.file_name}" alt="${post.title}" class="img-fluid rounded mb-3 full-width-media">`
+        : post.file_type === 'video/mp4' ? 
+            `<video controls class="w-100 rounded mb-3 full-width-media">
+                <source src="../../public/lib/images/posts/${post.file_name}" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>`
+        : post.file_type === 'audio/mpeg' || post.file_type === 'audio/wav' ? 
+            `<audio controls class="w-100 rounded mb-3 full-width-media">
+                <source src="../../public/lib/images/posts/${post.file_name}" type="${post.file_type}">
+                Your browser does not support the audio element.
+            </audio>`
+        : post.file_name && 
+            (post.file_type === 'application/pdf' || 
+            post.file_type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' || 
+            post.file_type === 'application/vnd.openxmlformats-officedocument.presentationml.presentation') ?
+            `<p class="mb-0"><strong>${post.file_name.replace(/^\d+_/, '')}</strong></p>
+            <a href="../../public/lib/images/posts/${post.file_name}" target="_blank" class="btn btn-link">Download File</a>`
+        : post.file_name ? 
+            `<p class="mb-0">
+                <a href="../../public/lib/images/posts/${post.file_name}" target="_blank" class="btn btn-link">Download File</a>
+            </p>`
+        : ''}
+    </div>
+</div>
+`;
+                                            });
+                                        } else {
+                                            postsHtml = '<p>No posts available.</p>';
+                                        }
+                        
+                                        $('#postsList').html(postsHtml);
+                                    } else {
+                                        console.error('Error fetching posts:', response.message);
+                                    }
+                                },
+                                error: function(jqXHR, textStatus, errorThrown) {
+                                    console.error("AJAX error: ", textStatus, errorThrown);
+                                }
+                            });
+                        }
+                        
+                        // Function to format date to 12-hour format
+                        function formatDateTo12Hour(dateString) {
+                            const date = new Date(dateString);
+                            const options = { 
+                                year: 'numeric', 
+                                month: 'long', 
+                                day: 'numeric', 
+                                hour: 'numeric', 
+                                minute: '2-digit',  
+                                hour12: true 
+                            };
+                            return date.toLocaleString('en-US', options);
+                        }
+                        
+                        // Fetch posts on page load
+                        fetchPosts();
+                        
+                        
+                        $('#postForm').on('submit', function(e) {
+                            e.preventDefault(); // Prevent the form from submitting traditionally
                     
+                            // Gather form data
+                            var formData = new FormData(this); // Use FormData to handle file uploads
+                    
+                            // Validate file types (images, pdf, docx, ppt, audio)
+                            var fileInput = $('#postFile')[0];
+                            var file = fileInput.files[0];
+                            var allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',  'application/vnd.openxmlformats-officedocument.presentationml.presentation', 'audio/mpeg', 'audio/wav', 'video/mp4'];
+                            
+                            if (file && !allowedTypes.includes(file.type)) {
+                                Swal.fire({
+                                    title: 'Error',
+                                    text: 'Invalid file type. Please upload an image, PDF, DOCX, PowerPoint, or audio file.',
+                                    icon: 'error'
+                                });
+                                return;
+                            }
+                            
+                            
+                            // Send the form data via AJAX
+                            $.ajax({
+                                url: '/edma/src/controller/post.php', // Target the controller for processing the post
+                                type: 'POST',
+                                dataType: 'json',
+                                data: formData,
+                                processData: false,
+                                contentType: false,
+                                success: function(response) {
+                                    if (response.status === 'success') {
+                                        Swal.fire({
+                                            title: 'Success',
+                                            text: response.message,
+                                            icon: response.icon
+                                        }).then(() => {
+                                            window.location.href = 'admin.php'; // Redirect to admin dashboard after success
+                                        });
+                                    } else {
+                                        Swal.fire({
+                                            title: 'Error',
+                                            text: response.message,
+                                            icon: response.icon
+                                        });
+                                    }
+                                },
+                                error: function(jqXHR, textStatus, errorThrown) {
+                                    console.log("AJAX error: ", textStatus, errorThrown);
+                                    Swal.fire({
+                                        title: 'Error',
+                                        text: 'There was an error processing your request. Please try again.',
+                                        icon: 'error'
+                                    });
+                                }
+                            });
+                        });
                     $('#editForm').on('submit', function(e) {
                         e.preventDefault(); // Prevent the default form submission
                         console.log("Edit form submitted!"); // Check if this line is reached
@@ -354,7 +529,7 @@ $(document).ready(function() {
                 } else {
                     Swal.fire({
                         title: 'Error',
-                        text: response.error || 'An error occurred.',
+                        text: response.error || response.message || 'An error occurred.',
                         icon: 'error'
                     });
                 }

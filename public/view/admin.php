@@ -1,7 +1,7 @@
 <?php
 require_once '../../src/controller/userController.php';
 $controller = new userController();
-$controller->sessionhome(); 
+$controller->sessionAdmin(); 
 $controller->handleLogoutAction(); 
 ?>
 <!DOCTYPE html>
@@ -21,6 +21,8 @@ $controller->handleLogoutAction();
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 </head>
 <body>
-    <nav id="userAdmin"></nav>
+    <nav id="userData"></nav>
+    <div id="adminPost"></div>
+    <div id="adminPostlist"></div>
 </body>
 </html>

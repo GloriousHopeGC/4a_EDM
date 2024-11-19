@@ -5,8 +5,7 @@ require_once '../../src/controller/database.php';
 class userController
 {
     // Function for user registration
-    public function user_register($email, $password, $role, $name, $gender, $birthday, $address)
-    {
+    public function user_register($email, $password, $role, $name, $gender, $birthday, $address){
         // Initialize the database connection
         $db = new database();
         $con = $db->initDatabase();
@@ -61,8 +60,7 @@ class userController
     }
 
     // New method to handle user registration from form
-    public function handleRegistration()
-    {
+    public function handleRegistration(){
         // Set header to return JSON response
         header('Content-Type: application/json');
     
@@ -102,12 +100,8 @@ class userController
             }
         }
     }
-    
-
-
     // Check if the login form has been submitted
-    public function handleLogin()
-    {
+    public function handleLogin(){
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Get form input values and sanitize them
             $email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
@@ -169,26 +163,40 @@ class userController
         exit();
     }
     
-    public function session(){
+    public function session() {
         session_start();
-        if (isset($_SESSION['user_id'])){
-        header('Location: home.php');
-        exit();
+        if (isset($_SESSION['user_id'])) {
+            header('Location: home.php');
+            exit();
         }
     }
-    public function sessionhome(){
+    
+    public function sessionhome() {
         session_start();
         if (!isset($_SESSION['user_id'])) {
-        header('Location: login.php'); // Redirect to login if not logged in
-        exit();
+            header('Location: login.php'); // Redirect to login if not logged in
+            exit();
+        } elseif ($_SESSION['role'] == 2) {
+            header('Location: admin.php'); // Redirect admins to the admin dashboard
+            exit();
         }
     }
-    public function getUserData(){
-    $db = new database();
-    $con = $db->initDatabase();
+    
+    public function sessionAdmin() {
+        session_start();
+        if (!isset($_SESSION['user_id']) || $_SESSION['role'] != 2) {
+            header('Location: home.php'); // Redirect to home page if not an admin (role = 2)
+            exit();
+        }
+    }
+    
+    
+        public function getUserData(){
+        $db = new database();
+        $con = $db->initDatabase();
 
     // Check if the user is logged in
-    if (isset($_SESSION['user_id'])) {
+        if (isset($_SESSION['user_id'])) {
         $user_id = $_SESSION['user_id'];
 
         // Prepare a statement to fetch user data
@@ -241,7 +249,162 @@ class userController
             return ['status' => 'error', 'icon' => 'error', 'message' => 'Error: ' . $e->getMessage()];
         }
     }
-    
+    public function updateEmail($user_id, $new_email)
+    {
+    $db = new database();
+    $con = $db->initDatabase();
+
+    try {
+        // Check if the email is valid
+        if (!filter_var($new_email, FILTER_VALIDATE_EMAIL)) {
+            return ['status' => 'error', 'message' => 'Invalid email format.'];
+        }
+
+        // Check if the email is already in use by another user
+        $checkEmailStmt = $con->prepare("SELECT id FROM user WHERE email = :new_email AND id != :user_id");
+        $checkEmailStmt->bindParam(':new_email', $new_email, PDO::PARAM_STR);
+        $checkEmailStmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
+        $checkEmailStmt->execute();
+
+        if ($checkEmailStmt->rowCount() > 0) {
+            return ['status' => 'error', 'message' => 'Email is already in use by another user.'];
+        }
+
+        // Update the user's email
+        $stmt = $con->prepare("UPDATE user SET email = :new_email WHERE id = :user_id");
+        $stmt->bindParam(':new_email', $new_email, PDO::PARAM_STR);
+        $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
+
+        if ($stmt->execute()) {
+            return ['status' => 'success', 'message' => 'Email updated successfully!'];
+        } else {
+            $errorInfo = $stmt->errorInfo();
+            return ['status' => 'error', 'message' => 'Database error: ' . $errorInfo[2]];
+        }
+    } catch (PDOException $e) {
+        return ['status' => 'error', 'message' => 'Database error: ' . $e->getMessage()];
+    } catch (Exception $e) {
+        return ['status' => 'error', 'message' => 'Error: ' . $e->getMessage()];
+    }
+}
+public function changePassword($user_id, $currentPassword, $newPassword, $confirmPassword)
+{
+    try {
+        // Validate input
+        if (empty($user_id) || empty($currentPassword) || empty($newPassword) || empty($confirmPassword)) {
+            return ['error' => 'All fields are required.'];
+        }
+
+        if ($newPassword !== $confirmPassword) {
+            return ['error' => 'New passwords do not match.'];
+        }
+
+        // Initialize the database connection
+        $db = new database();
+        $con = $db->initDatabase();
+
+        // Fetch the user's current password
+        $stmt = $con->prepare("SELECT password FROM user WHERE id = :id");
+        $stmt->execute(['id' => $user_id]);
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$user) {
+            return ['error' => 'User not found.'];
+        }
+
+        // Verify the current password
+        if (!password_verify($currentPassword, $user['password'])) {
+            return ['error' => 'Incorrect current password.'];
+        }
+
+        // Hash the new password
+        $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
+
+        // Update the password in the database
+        $updateStmt = $con->prepare("UPDATE user SET password = :password WHERE id = :id");
+        $updateStmt->execute([
+            'password' => $hashedPassword,
+            'id' => $user_id
+        ]);
+
+        // Return success response
+        return ['success' => true, 'message' => 'Password changed successfully.'];
+    } catch (PDOException $e) {
+        return ['error' => 'Database error: ' . $e->getMessage()];
+    } catch (Exception $e) {
+        return ['error' => 'Error: ' . $e->getMessage()];
+    }
+}
+public function updateProfileImage($userId, $image)
+{
+    // Initialize response array
+    $response = ['status' => 'error', 'message' => ''];
+
+    // Validate file type (allow JPG, PNG, GIF)
+    $allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
+    if (!in_array($image['type'], $allowedTypes)) {
+        $response['icon'] = 'error';
+        $response['message'] = 'Invalid file type. Only JPG, PNG, or GIF are allowed.';
+        return $response;
+    } elseif ($image['size'] > 2 * 1024 * 1024) { // 2MB file size limit
+        $response['icon'] = 'error';
+        $response['message'] = 'File size exceeds the 2MB limit.';
+        return $response;
+    }
+
+    // Define upload directory
+    $uploadDir = '../../public/lib/images/user_profile/';
+
+    // Check if upload directory is writable
+    if (!is_dir($uploadDir) || !is_writable($uploadDir)) {
+        $response['icon'] = 'error';
+        $response['message'] = 'Upload directory is not writable or does not exist.';
+        return $response;
+    }
+
+    // Generate unique file name by adding userId and timestamp for uniqueness
+    $timestamp = time();
+    $originalFileName = basename($image['name']);
+    $imageName = $userId . '_' . $timestamp . '_' . $originalFileName;
+    $targetFilePath = $uploadDir . $imageName;
+
+    // Move the uploaded file to the target directory
+    if (move_uploaded_file($image['tmp_name'], $targetFilePath)) {
+        // Extract only the original file name to store in the database
+        $finalImageName = $imageName;
+
+        // Proceed with database update for the profile image
+        try {
+            // Initialize database connection
+            $db = new database();
+            $con = $db->initDatabase();
+
+            // Update the user profile image in the database
+            $stmt = $con->prepare("UPDATE user_info SET updated = NOW(), image_name = :image_name WHERE u_id = :user_id");
+            $stmt->bindParam(':image_name', $finalImageName);
+            $stmt->bindParam(':user_id', $userId);
+            $stmt->execute();
+
+            // Return success response
+            $response['icon'] = 'success';
+            $response['status'] = 'success';
+            $response['message'] = 'Profile image updated successfully.';
+            $response['imageName'] = $finalImageName;
+        } catch (Exception $e) {
+            $response['message'] = 'Failed to update profile image in the database: ' . $e->getMessage();
+            error_log("Error updating profile image: " . $e->getMessage());
+        }
+    } else {
+        $response['icon'] = 'error';
+        $response['message'] = 'Failed to upload the file.';
+        error_log("Failed to move uploaded file to target location.");
+    }
+
+    return $response;
+}
+
+
+
 public function logout(){
     session_start(); // Start the session
     session_unset(); // Unset all session variables

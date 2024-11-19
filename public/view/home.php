@@ -22,5 +22,6 @@ $controller->handleLogoutAction();
 </head>
 <body>
     <nav id="userData"></nav>
+    <div id="adminPostlist"></div>
 </body>
 </html>
