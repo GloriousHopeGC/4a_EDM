@@ -288,27 +288,62 @@ $(document).ready(function() {
                     `);
 
                         $('#adminPost').html(`
-                            <div class="container mt-5">
-                                <div class="card">
-                                    <div class="card-body">
+                          <div class="d-flex justify-content-center mt-4">
+                            <div class="card shadow-sm" style="width: 100%; max-width: 500px; border-radius: 10px;">
+                                <div class="card-body d-flex align-items-center">
+                                    <!-- Profile Picture -->
+                                        <img src="../lib/images/user_profile/${response.user_info.image_name}" alt="Profile Picture" class="rounded-circle" style="width: 40px; height: 40px; margin-right: 10px;">
+                                    <!-- Input-like Button -->
+                                        <button id="openModalBtn" data-bs-toggle="modal" data-bs-target="#postModal" class="btn btn-outline-white flex-grow-1 text-start d-flex align-items-center" style="border-radius: 20px; padding: 10px 15px; ; border-color: #444;">Post Now, ${response.user_info.name}</button>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Modal HTML -->
+                        <div id="postModal" class="modal fade" tabindex="-1" aria-labelledby="postModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="postModalLabel">Create Post</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
                                         <form id="postForm" method="POST" enctype="multipart/form-data">
                                             <input type="hidden" name="u_id" value="${response.user_info.u_id}">
                                             <input type="hidden" name="ui_id" value="${response.user_info.id}">
-                                            <div class="mb-3">
-                                                <label for="postContent" class="form-label">Create Post</label>
-                                                <textarea class="form-control" id="postContent" name="postContent" rows="4"></textarea>
-                                            </div>
-                                            <div class="mb-3">
-                                                <label for="postFile" class="form-label">Upload File</label>
-                                                <input type="file" class="form-control" id="postFile" name="postFile">
-                                            </div>
-                                            <button type="submit" class="btn btn-primary">Create Post</button>
+                                        <div class="mb-3">
+                                            <label for="postContent" class="form-label">What Do You Want To Post?</label>
+                                            <textarea class="form-control" id="postContent" name="postContent" rows="4"></textarea>
+                                        </div>
+                                        <div class="mb-3 d-flex align-items-center">
+                                        <!-- Icon-Based Upload Button -->
+                                            <label for="postFile" class="btn btn-outline-white d-flex align-items-center" style="cursor: pointer;">
+                                            <i class="bi bi-paperclip" style="font-size: 1.2rem;"></i>
+                                        </label>
+                                            <label for="postFile" class="btn btn-outline-white d-flex align-items-center" style="cursor: pointer;">
+                                            <i class="bi bi-image" style="font-size: 1.2rem;"></i>
+                                        </label>
+                                            <input type="file" id="postFile" name="postFile" style="display: none;">
+                                            <span id="fileName" class="ms-3 text-muted"></span>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary">Create Post</button>
                                         </form>
                                     </div>
                                 </div>
                             </div>
-                           
-                        `);
+                        </div>`); 
+                        handleFileInputChange();
+                        function handleFileInputChange() {
+                            const fileInput = document.getElementById('postFile');
+                            if (fileInput) {
+                                fileInput.addEventListener('change', function () {
+                                    const fileNameSpan = document.getElementById('fileName');
+                                    fileNameSpan.textContent = this.files.length > 0 ? this.files[0].name : 'No file chosen';
+                                });
+                            }
+                        }
+                        
+                        
+                          
                         $('#adminPostlist').html(`
                            <div id="postsContainer" class="mt-5">
                                 <div id="postsList"></div>
@@ -366,20 +401,36 @@ $(document).ready(function() {
                                                                 <div class="card-body">
                                                                     <div class="d-flex align-items-center mb-3">
                                                                         <img src="../../public/lib/images/user_profile/${post.image_name}" alt="${post.admin_name}" class="img-fluid rounded-circle" style="width: 40px; height: 40px; margin-right: 10px;">
-                                                                        <h5 class="card-title text-truncate">${post.admin_name || 'Unknown'}</h5>
+                                                                        <h6 class="card-title text-truncate">${post.admin_name || 'Unknown'}</h5>
                                                                     </div>
                             
-                                                                    <p class="card-text text-truncate">${post.content}</p>
-                                                                    <small class="text-muted d-block mb-3">Posted on ${formattedDate}</small>
-                            
-                                                                    ${post.file_name && post.file_type.startsWith('image/') ? 
-                                                                        `<img src="../../public/lib/images/posts/${post.file_name}" alt="${post.title}" class="img-fluid rounded mb-3 full-width-media">` 
-                                                                    : post.file_type === 'video/mp4' ? 
-                                                                        `<video controls class="w-100 rounded mb-3 full-width-media">
-                                                                            <source src="../../public/lib/images/posts/${post.file_name}" type="video/mp4">
-                                                                            Your browser does not support the video tag.
-                                                                        </video>` 
-                                                                    : ''}
+                                                                   <p class="card-text text-truncate">${post.content}</p>
+                                                            <small class="text-muted d-block mb-3">Posted on ${formattedDate}</small>
+                        
+                                                            <!-- Media Display -->
+                                                            ${post.file_name && post.file_type.startsWith('image/') ? 
+                                                                `<img src="../../public/lib/images/posts/${post.file_name}" alt="${post.title}" class="img-fluid rounded mb-3 full-width-media" style="max-width: 100%; height: auto;">`
+                                                            : post.file_type === 'video/mp4' ? 
+                                                                `<video controls class="w-100 rounded mb-3 full-width-media">
+                                                                    <source src="../../public/lib/images/posts/${post.file_name}" type="video/mp4">
+                                                                    Your browser does not support the video tag.
+                                                                </video>`
+                                                            : post.file_type === 'audio/mpeg' || post.file_type === 'audio/wav' ? 
+                                                                `<audio controls class="w-100 rounded mb-3 full-width-media">
+                                                                    <source src="../../public/lib/images/posts/${post.file_name}" type="${post.file_type}">
+                                                                    Your browser does not support the audio element.
+                                                                </audio>`
+                                                                : post.file_name && 
+                                                                (post.file_type === 'application/pdf' || 
+                                                                post.file_type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' || 
+                                                                post.file_type === 'application/vnd.openxmlformats-officedocument.presentationml.presentation') ?
+                                                                // Check file type and display its name instead of "Download File"
+                                                                `<a href="../../public/lib/images/posts/${post.file_name}"target="_blank" class="btn btn-link">${post.file_name.replace(/^\d+_/, '')}</a>`
+                                                            : post.file_name ? 
+                                                                `<p class="mb-0">
+                                                                    <a href="../../public/lib/images/posts/${post.file_name}" target="_blank" class="btn btn-link">Download File</a>
+                                                                </p>`
+                                                            : ''}
                             
                                                                     <input type="hidden" name="user_id" value="${post.u_id}">
                             
@@ -513,6 +564,14 @@ $(document).ready(function() {
                                                     <source src="../../public/lib/images/posts/${postFile}" type="video/mp4">
                                                     Your browser does not support the video tag.
                                                 </video>
+                                            `);
+                                        }
+                                        else if (fileExtension === 'mp3') {
+                                            fileContainer.append(`
+                                                <audio controls class="w-100 rounded mb-3 full-width-media">
+                                                                    <source src="../../public/lib/images/posts/${postFile}" type="audio/mpeg">
+                                                                    Your browser does not support the audio element.
+                                                                </audio>
                                             `);
                                         }
                                     }

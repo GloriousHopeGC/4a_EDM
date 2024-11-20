@@ -9,7 +9,7 @@ class userController
         // Initialize the database connection
         $db = new database();
         $con = $db->initDatabase();
-
+    
         // Start a transaction
         $con->beginTransaction();
         
@@ -31,6 +31,14 @@ class userController
             // Get the last inserted user's id
             $last_user_id = $con->lastInsertId();
             
+            // Determine the default image path based on gender
+            $default_image_path = 'default.png'; // Default fallback
+            if (strtolower($gender) === 'male') {
+                $default_image_path = 'male.jpg';
+            } elseif (strtolower($gender) === 'female') {
+                $default_image_path = 'female.jpg';
+            }
+            
             // Prepare to insert into user_info table
             $stmt2 = $con->prepare("INSERT INTO user_info (u_id, name, gender, birthday, address, status, created, updated, image_name) 
                                      VALUES (:u_id, :name, :gender, :birthday, :address, :status, NOW(), NOW(), :image_path)");
@@ -43,7 +51,6 @@ class userController
             $stmt2->bindParam(':address', $address);
             $status = 1; // Active status
             $stmt2->bindParam(':status', $status);
-            $default_image_path = 'default.png';
             $stmt2->bindParam(':image_path', $default_image_path);
             $stmt2->execute();
             
@@ -58,6 +65,7 @@ class userController
             return ['status' => 'error', 'icon'=>'error', 'message' => 'Failed to register user: ' . $e->getMessage()];
         }
     }
+    
 
     // New method to handle user registration from form
     public function handleRegistration(){
