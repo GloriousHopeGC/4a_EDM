@@ -362,24 +362,38 @@ public function updateProfileImage($userId, $image)
         return $response;
     }
 
-    // Generate unique file name by adding userId and timestamp for uniqueness
-    $timestamp = time();
-    $originalFileName = basename($image['name']);
-    $imageName = $userId . '_' . $timestamp . '_' . $originalFileName;
-    $targetFilePath = $uploadDir . $imageName;
+    // Initialize database connection
+    try {
+        $db = new database();
+        $con = $db->initDatabase();
 
-    // Move the uploaded file to the target directory
-    if (move_uploaded_file($image['tmp_name'], $targetFilePath)) {
-        // Extract only the original file name to store in the database
-        $finalImageName = $imageName;
+        // Retrieve the current image name from the database
+        $stmt = $con->prepare("SELECT image_name FROM user_info WHERE u_id = :user_id");
+        $stmt->bindParam(':user_id', $userId);
+        $stmt->execute();
+        $user = $stmt->fetch();
 
-        // Proceed with database update for the profile image
-        try {
-            // Initialize database connection
-            $db = new database();
-            $con = $db->initDatabase();
+        // If the user already has a profile image, delete it
+        if ($user && $user['image_name']) {
+            $existingImage = $user['image_name'];
+            $existingImagePath = 'C:\\xampp\\htdocs\\edma\\public\\lib\\images\\user_profile\\' . $existingImage;
 
+            // Check if the file exists and delete it
+            if (file_exists($existingImagePath)) {
+                unlink($existingImagePath); // Delete the old profile image
+            }
+        }
+
+        // Generate unique file name by adding userId and timestamp for uniqueness
+        $timestamp = time();
+        $originalFileName = basename($image['name']);
+        $imageName = $userId . '_' . $timestamp . '_' . $originalFileName;
+        $targetFilePath = $uploadDir . $imageName;
+
+        // Move the uploaded file to the target directory
+        if (move_uploaded_file($image['tmp_name'], $targetFilePath)) {
             // Update the user profile image in the database
+            $finalImageName = $imageName;
             $stmt = $con->prepare("UPDATE user_info SET updated = NOW(), image_name = :image_name WHERE u_id = :user_id");
             $stmt->bindParam(':image_name', $finalImageName);
             $stmt->bindParam(':user_id', $userId);
@@ -390,14 +404,14 @@ public function updateProfileImage($userId, $image)
             $response['status'] = 'success';
             $response['message'] = 'Profile image updated successfully.';
             $response['imageName'] = $finalImageName;
-        } catch (Exception $e) {
-            $response['message'] = 'Failed to update profile image in the database: ' . $e->getMessage();
-            error_log("Error updating profile image: " . $e->getMessage());
+        } else {
+            $response['icon'] = 'error';
+            $response['message'] = 'Failed to upload the file.';
+            error_log("Failed to move uploaded file to target location.");
         }
-    } else {
-        $response['icon'] = 'error';
-        $response['message'] = 'Failed to upload the file.';
-        error_log("Failed to move uploaded file to target location.");
+    } catch (Exception $e) {
+        $response['message'] = 'Failed to update profile image in the database: ' . $e->getMessage();
+        error_log("Error updating profile image: " . $e->getMessage());
     }
 
     return $response;

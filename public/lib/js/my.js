@@ -138,41 +138,43 @@ $(document).ready(function() {
                 `);
                 $('#userInfo').html(`
                    <div class="container mt-5">
-                        <div class="card">
-                            <div class="card-body">
-                                <h5 class="card-title text-center">User Details</h5>
-                                    <div class="text-center mb-3">
-                                        <img src="../lib/images/user_profile/${response.user_info.image_name}" alt="User Image" class="rounded-circle" style="width: 150px; height: 150px; object-fit: cover;" data-bs-toggle="modal" data-bs-target="#changeImageModal">
-                                            <i class="fas fa-camera fa-2x" data-bs-toggle="modal" data-bs-target="#changeImageModal" style="cursor: pointer;"></i>
-                                    </div>
-                                    <div class="text-center">
-                                            <p id="dummyText">Id: ${(response.user_info.u_id).toString().padStart(5, '0')}-${(new Date(response.user_info.created).getMonth() + 1).toString().padStart(3, '0')}-${new Date(response.user_info.created).getFullYear()}</p>
-                                          </div>
-                                        <ul class="list-group list-group-flush">
-                                            <li class="list-group-item"><strong>Name:</strong> ${response.user_info.name}</li>
-                                            <li class="list-group-item"><strong>Email:</strong>  ${response.user.email}</li>
-                                            <li class="list-group-item"><strong>Gender:</strong> ${response.user_info.gender}</li>
-                                            <li class="list-group-item"><strong>Birthday:</strong> ${response.user_info.birthday}</li>
-                                            <li class="list-group-item"><strong>Address:</strong> ${response.user_info.address}</li>
-                                        </ul>
-                                        <div class="text-center mt-4">
-                                        <li class="nav-item dropdown d-block d-lg-block">
-                                            <a class="nav-link dropdown-toggle" href="#" id="settingsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                               <i class="bi bi-gear"></i> Account Settings
-                                            </a>
-                                            <ul class="dropdown-menu" aria-labelledby="settingsDropdown"  style="cursor: pointer;">
-                                                <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#editModal"><i class="bi bi-pencil"></i> Edit Profile</a></li>
-                                                <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#changePassword"><i class="bi bi-key"></i> Change Password</a></li>
-                                                 <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#changeEmailModal"><i class="bi bi-envelope"></i> Change Email</a></li>
-                                            </ul>
-                                        </li>
-                                           <!-- <button class="btn btn-custom" data-bs-toggle="modal" data-bs-target="#editModal">Edit Profile</button>
-                                            <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#changePassword">Change Password</button>
-                                            <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#changeEmailModal">Change Email</button>  -->
-                                        </div>
-                            </div>
-                        </div>
-                    </div>
+    <div class="card">
+        <div class="card-body">
+            <!-- Flex container to center the title and position the dropdown to the right -->
+            <div class="d-flex justify-content-between align-items-center">
+                <!-- Centered title with flex-grow to take remaining space -->
+                <h5 class="card-title mx-auto">User Details</h5>
+                <div class="dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="settingsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-gear"></i>
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="settingsDropdown" style="cursor: pointer;">
+                        <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#editModal"><i class="bi bi-pencil"></i> Edit Profile</a></li>
+                        <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#changePassword"><i class="bi bi-key"></i> Change Password</a></li>
+                        <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#changeEmailModal"><i class="bi bi-envelope"></i> Change Email</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="text-center mb-3">
+                <img src="../lib/images/user_profile/${response.user_info.image_name}" alt="User Image" class="rounded-circle" style="width: 150px; height: 150px; object-fit: cover;" data-bs-toggle="modal" data-bs-target="#changeImageModal">
+                <i class="fas fa-camera fa-2x" data-bs-toggle="modal" data-bs-target="#changeImageModal" style="cursor: pointer;"></i>
+            </div>
+            <div class="text-center">
+                <p id="dummyText">Id: ${(response.user_info.u_id).toString().padStart(5, '0')}-${(new Date(response.user_info.created).getMonth() + 1).toString().padStart(3, '0')}-${new Date(response.user_info.created).getFullYear()}</p>
+            </div>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item"><strong>Name:</strong> ${response.user_info.name}</li>
+                <li class="list-group-item"><strong>Email:</strong>  ${response.user.email}</li>
+                <li class="list-group-item"><strong>Gender:</strong> ${response.user_info.gender}</li>
+                <li class="list-group-item"><strong>Birthday:</strong> ${response.user_info.birthday}</li>
+                <li class="list-group-item"><strong>Age:</strong> ${calculateAge(response.user_info.birthday)}</li>
+                <li class="list-group-item"><strong>Address:</strong> ${response.user_info.address}</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+
                     <!-- Change Password Modal -->
                     <div class="modal fade" id="changePassword" tabindex="-1" aria-labelledby="changePasswordLabel" aria-hidden="true">
                         <div class="modal-dialog">
@@ -316,6 +318,35 @@ $(document).ready(function() {
                             $(document).ready(function() {
                                 // Fetch posts
                                 function fetchPosts() {
+                                    // Dynamically add the modal HTML to the page (only once)
+                                    if ($('#editPostModal').length === 0) { // Check if modal already exists
+                                        const modalHtml = `
+                                            <div class="modal fade" id="editPostModal" tabindex="-1" aria-labelledby="editPostModalLabel" aria-hidden="true">
+                                                <div class="modal-dialog">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title" id="editPostModalLabel">Edit Post</h5>
+                                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <textarea class="form-control" rows="5"></textarea>
+                                                            <div class="mt-3">
+                                                                <label for="postFile" class="form-label">Upload a file (optional)</label>
+                                                                <input type="file" class="form-control" id="postFile" accept="image/*,video/mp4">
+                                                                <div id="existingFileContainer" class="mt-3"></div> <!-- Display existing file if any -->
+                                                            </div>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                            <button type="button" class="btn btn-primary" id="savePostChanges">Save Changes</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        `;
+                                        $('body').append(modalHtml); // Append modal HTML to body
+                                    }
+                            
                                     $.ajax({
                                         url: '/edma/src/controller/fetch_post.php',
                                         type: 'GET',
@@ -324,64 +355,46 @@ $(document).ready(function() {
                                             if (response.status === 'success') {
                                                 const posts = response.posts;
                                                 let postsHtml = '';
-                                                const currentUserId = $('meta[name="current-user-id"]').attr('content'); // Assuming a meta tag for user ID
-                                                console.log('Current User ID:', currentUserId);
+                                                const currentUserId = $('meta[name="current-user-id"]').attr('content');
                             
                                                 if (posts.length > 0) {
                                                     posts.forEach(post => {
                                                         const formattedDate = formatDateTo12Hour(post.created_at);
                             
                                                         postsHtml += `
-                                                       <div class="card mb-3" style="max-width: 540px; margin: auto;">
-                                                        <div class="card-body">
-                                                            <!-- Admin Info -->
-                                                            <div class="d-flex align-items-center mb-3">
-                                                                <img src="../../public/lib/images/user_profile/${post.image_name}" alt="${post.admin_name}" class="img-fluid rounded-circle" style="width: 40px; height: 40px; margin-right: 10px;">
-                                                                <h5 class="card-title text-truncate">${post.admin_name || 'Unknown'}</h5>
-                                                            </div>
-                        
-                                                            <!-- Post Content -->
-                                                            <p class="card-text text-truncate">${post.content}</p>
-                                                            <small class="text-muted d-block mb-3">Posted on ${formattedDate}</small>
-                        
-                                                            <!-- Media Display -->
-                                                            ${post.file_name && post.file_type.startsWith('image/') ? 
-                                                                `<img src="../../public/lib/images/posts/${post.file_name}" alt="${post.title}" class="img-fluid rounded mb-3 full-width-media">`
-                                                            : post.file_type === 'video/mp4' ? 
-                                                                `<video controls class="w-100 rounded mb-3 full-width-media">
-                                                                    <source src="../../public/lib/images/posts/${post.file_name}" type="video/mp4">
-                                                                    Your browser does not support the video tag.
-                                                                </video>`
-                                                            : post.file_type === 'audio/mpeg' || post.file_type === 'audio/wav' ? 
-                                                                `<audio controls class="w-100 rounded mb-3 full-width-media">
-                                                                    <source src="../../public/lib/images/posts/${post.file_name}" type="${post.file_type}">
-                                                                    Your browser does not support the audio element.
-                                                                </audio>`
-                                                                : post.file_name && 
-                                                                (post.file_type === 'application/pdf' || 
-                                                                post.file_type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' || 
-                                                                post.file_type === 'application/vnd.openxmlformats-officedocument.presentationml.presentation') ?
-                                                                // Check file type and display its name instead of "Download File"
-                                                                `<a href="../../public/lib/images/posts/${post.file_name}"target="_blank" class="btn btn-link">${post.file_name.replace(/^\d+_/, '')}</a>`
-                                                            : post.file_name ? 
-                                                                `<p class="mb-0">
-                                                                    <a href="../../public/lib/images/posts/${post.file_name}" target="_blank" class="btn btn-link">Download File</a>
-                                                                </p>`
-                                                            : ''}
-                                                                    <input type="hidden" name="user_id" value="${post.u_id}">
-                                                                   
-                            
-                                                                <!-- Dropdown for delete action (visible only to matching user) -->
-                                                                ${post.u_id == currentUserId ? `
-                                                                    <div class="dropdown position-absolute top-0 end-0 p-2">
-                                                                   <i class="bi bi-three-dots mr-3" style="font-size: 20px;" dropdown-toggle="true" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false"></i>
-                                                                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                                                            <li><a class="dropdown-item delete-post" href="#" data-post-id="${post.post_id}">Delete</a></li>
-                                                                        </ul>
+                                                            <div class="card mb-3" style="max-width: 540px; margin: auto;">
+                                                                <div class="card-body">
+                                                                    <div class="d-flex align-items-center mb-3">
+                                                                        <img src="../../public/lib/images/user_profile/${post.image_name}" alt="${post.admin_name}" class="img-fluid rounded-circle" style="width: 40px; height: 40px; margin-right: 10px;">
+                                                                        <h5 class="card-title text-truncate">${post.admin_name || 'Unknown'}</h5>
                                                                     </div>
-                                                                ` : ''}
+                            
+                                                                    <p class="card-text text-truncate">${post.content}</p>
+                                                                    <small class="text-muted d-block mb-3">Posted on ${formattedDate}</small>
+                            
+                                                                    ${post.file_name && post.file_type.startsWith('image/') ? 
+                                                                        `<img src="../../public/lib/images/posts/${post.file_name}" alt="${post.title}" class="img-fluid rounded mb-3 full-width-media">` 
+                                                                    : post.file_type === 'video/mp4' ? 
+                                                                        `<video controls class="w-100 rounded mb-3 full-width-media">
+                                                                            <source src="../../public/lib/images/posts/${post.file_name}" type="video/mp4">
+                                                                            Your browser does not support the video tag.
+                                                                        </video>` 
+                                                                    : ''}
+                            
+                                                                    <input type="hidden" name="user_id" value="${post.u_id}">
+                            
+                                                                    <!-- Dropdown for delete and edit actions -->
+                                                                    ${post.u_id == currentUserId ? `
+                                                                        <div class="dropdown position-absolute top-0 end-0 p-2">
+                                                                            <i class="bi bi-three-dots mr-3" style="font-size: 20px;" data-bs-toggle="dropdown" aria-expanded="false"></i>
+                                                                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                                                                <li><a class="dropdown-item edit-post" href="#" data-post-id="${post.post_id}" data-post-content="${post.content}" data-post-file="${post.file_name}">Edit</a></li>
+                                                                                <li><a class="dropdown-item delete-post" href="#" data-post-id="${post.post_id}">Delete</a></li>
+                                                                            </ul>
+                                                                        </div>
+                                                                    ` : ''}
+                                                                </div>
                                                             </div>
-                                                        </div>
                                                         `;
                                                     });
                                                 } else {
@@ -397,88 +410,181 @@ $(document).ready(function() {
                                             console.error("AJAX error: ", textStatus, errorThrown);
                                         }
                                     });
-                            }
-                        
-                            // Function to format date to 12-hour format
-                            function formatDateTo12Hour(dateString) {
-                                const date = new Date(dateString);
-                                const options = { 
-                                    year: 'numeric', 
-                                    month: 'long', 
-                                    day: 'numeric', 
-                                    hour: 'numeric', 
-                                    minute: '2-digit',  
-                                    hour12: true 
-                                };
-                                return date.toLocaleString('en-US', options);
-                            }
-                        // Function to delete a post
-                        function deletePost(postId) {
-                            console.log("Deleting post with ID:", postId); // Log the ID before making the AJAX call
-                        
-                            // Confirm deletion using SweetAlert
-                            Swal.fire({
-                                title: 'Are you sure?',
-                                text: 'Do you really want to delete this post? This action cannot be undone.',
-                                icon: 'warning',
-                                showCancelButton: true,
-                                confirmButtonText: 'Yes, delete it!',
-                                cancelButtonText: 'Cancel',
-                            }).then((result) => {
-                                if (result.isConfirmed) {
-                                    // Proceed with deletion if confirmed
+                                }
+                            
+                                // Function to format date to 12-hour format
+                                function formatDateTo12Hour(dateString) {
+                                    const date = new Date(dateString);
+                                    const options = { 
+                                        year: 'numeric', 
+                                        month: 'long', 
+                                        day: 'numeric', 
+                                        hour: 'numeric', 
+                                        minute: '2-digit',  
+                                        hour12: true 
+                                    };
+                                    return date.toLocaleString('en-US', options);
+                                }
+                                
+                                function deletePost(postId) {
+                                    console.log("Deleting post with ID:", postId); // Log the ID before making the AJAX call
+                                
+                                    // Confirm deletion using SweetAlert
+                                    Swal.fire({
+                                        title: 'Are you sure?',
+                                        text: 'Do you really want to delete this post? This action cannot be undone.',
+                                        icon: 'warning',
+                                        showCancelButton: true,
+                                        confirmButtonText: 'Yes, delete it!',
+                                        cancelButtonText: 'Cancel',
+                                    }).then((result) => {
+                                        if (result.isConfirmed) {
+                                            // Proceed with deletion if confirmed
+                                            $.ajax({
+                                                url: '/edma/src/controller/delete_post.php',
+                                                type: 'POST',
+                                                data: { id: postId },
+                                                dataType: 'json', // Ensures the response is parsed as JSON
+                                                success: function(response) {
+                                                    console.log("Response from server:", response); // Debug response
+                                
+                                                    if (response.status === 'success') {
+                                                        Swal.fire({
+                                                            title: 'Deleted!',
+                                                            text: 'Post deleted successfully!',
+                                                            icon: 'success',
+                                                            confirmButtonText: 'OK',
+                                                        });
+                                
+                                                        fetchPosts(); // Refresh the posts list after deletion
+                                                    } else {
+                                                        const errorMessage = response.message || 'Unknown error';
+                                                        Swal.fire({
+                                                            title: 'Error',
+                                                            text: 'Error deleting post: ' + errorMessage,
+                                                            icon: 'error',
+                                                            confirmButtonText: 'OK',
+                                                        });
+                                                    }
+                                                },
+                                                error: function(jqXHR, textStatus, errorThrown) {
+                                                    console.error("AJAX error while deleting post: ", textStatus, errorThrown);
+                                                    Swal.fire({
+                                                        title: 'Error',
+                                                        text: 'AJAX error: ' + textStatus,
+                                                        icon: 'error',
+                                                        confirmButtonText: 'OK',
+                                                    });
+                                                },
+                                            });
+                                        }
+                                    });
+                                }
+                                
+                                // Use event delegation to handle clicks for dynamic elements
+                                $(document).on('click', '.delete-post', function(e) {
+                                    e.preventDefault(); // Prevent default anchor behavior
+                                    const postId = $(this).data('post-id'); // Retrieve post ID
+                                    deletePost(postId);
+                                });
+                                
+                                // Event listener for opening the edit modal
+                                $(document).on('click', '.edit-post', function(e) {
+                                    e.preventDefault();
+                                    const postId = $(this).data('post-id');
+                                    const postContent = $(this).data('post-content');
+                                    const postFile = $(this).data('post-file'); // Get file name if available
+                            
+                                    // Populate the modal with post content
+                                    $('#editPostModal textarea').val(postContent);
+                                    $('#savePostChanges').data('post-id', postId); // Set the postId to the Save Changes button
+                            
+                                    // Check if there's an existing file and display it
+                                    if (postFile) {
+                                        const fileExtension = postFile.split('.').pop().toLowerCase();
+                                        const fileContainer = $('#editPostModal #existingFileContainer');
+                                        fileContainer.empty(); // Clear previous file
+                            
+                                        if (fileExtension === 'jpg' || fileExtension === 'jpeg' || fileExtension === 'png' || fileExtension === 'gif') {
+                                            fileContainer.append(`<img src="../../public/lib/images/posts/${postFile}" alt="Post file" class="img-fluid rounded mb-3">`);
+                                        } else if (fileExtension === 'mp4') {
+                                            fileContainer.append(`
+                                                <video controls class="w-100 rounded mb-3">
+                                                    <source src="../../public/lib/images/posts/${postFile}" type="video/mp4">
+                                                    Your browser does not support the video tag.
+                                                </video>
+                                            `);
+                                        }
+                                    }
+                            
+                                    $('#editPostModal').modal('show');
+                                });
+                            
+                                $(document).on('click', '#savePostChanges', function() {
+                                    const updatedContent = $('#editPostModal textarea').val();
+                                    const postId = $(this).data('post-id');
+                                    const formData = new FormData();
+                                    formData.append('post_id', postId);
+                                    formData.append('content', updatedContent);
+                                    formData.append('file', $('#editPostModal #postFile')[0].files[0]); // Append the file if selected
+                            
                                     $.ajax({
-                                        url: '/edma/src/controller/delete_post.php',
+                                        url: '/edma/src/controller/edit_post.php',
                                         type: 'POST',
-                                        data: { id: postId },
-                                        dataType: 'json', // Ensures the response is parsed as JSON
+                                        data: formData,
+                                        processData: false, // Do not process the data
+                                        contentType: false, // Set content type to false for file upload
+                                        dataType: 'json',
                                         success: function(response) {
-                                            console.log("Response from server:", response); // Debug response
-                        
                                             if (response.status === 'success') {
                                                 Swal.fire({
-                                                    title: 'Deleted!',
-                                                    text: 'Post deleted successfully!',
+                                                    title: 'Post Updated!',
+                                                    text: 'Your post has been updated successfully.',
                                                     icon: 'success',
                                                     confirmButtonText: 'OK',
                                                 });
-                        
-                                                fetchPosts(); // Refresh the posts list after deletion
+                            
+                                                fetchPosts(); // Refresh posts after update
+                                                $('#editPostModal').modal('hide'); // Close modal
                                             } else {
-                                                const errorMessage = response.message || 'Unknown error';
                                                 Swal.fire({
                                                     title: 'Error',
-                                                    text: 'Error deleting post: ' + errorMessage,
+                                                    text: 'Error updating post.',
                                                     icon: 'error',
                                                     confirmButtonText: 'OK',
                                                 });
                                             }
                                         },
                                         error: function(jqXHR, textStatus, errorThrown) {
-                                            console.error("AJAX error while deleting post: ", textStatus, errorThrown);
+                                            console.error("AJAX error while updating post: ", textStatus, errorThrown);
                                             Swal.fire({
                                                 title: 'Error',
                                                 text: 'AJAX error: ' + textStatus,
                                                 icon: 'error',
                                                 confirmButtonText: 'OK',
                                             });
-                                        },
+                                        }
                                     });
-                                }
+                                });
+                            
+                            
+                                // Fetch posts on page load
+                                fetchPosts();
                             });
+                            
+                        function calculateAge(birthday) {
+                            const birthDate = new Date(birthday);
+                            const today = new Date();
+                            let age = today.getFullYear() - birthDate.getFullYear();
+                            const monthDifference = today.getMonth() - birthDate.getMonth();
+                        
+                            // Adjust if the birthday hasn't occurred yet this year
+                            if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDate.getDate())) {
+                                age--;
+                            }
+                        
+                            return age;
                         }
-                        
-                        // Use event delegation to handle clicks for dynamic elements
-                        $(document).on('click', '.delete-post', function(e) {
-                            e.preventDefault(); // Prevent default anchor behavior
-                            const postId = $(this).data('post-id'); // Retrieve post ID
-                            deletePost(postId);
-                        });
-                        
-
-                            fetchPosts();
-                        });
-                        
                         
                         
                         $('#postForm').on('submit', function(e) {
