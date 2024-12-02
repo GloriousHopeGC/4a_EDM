@@ -129,37 +129,64 @@ class userController
         // Initialize the database connection
         $db = new database();
         $con = $db->initDatabase();
-        
+    
         // Start the session
         session_start();
     
         // Set header to return JSON response
         header('Content-Type: application/json');
     
-        // Prepare a statement to fetch the user
-        $stmt = $con->prepare("SELECT * FROM user WHERE email = :email");
+        // Prepare a statement to fetch the user and their status
+        $stmt = $con->prepare("
+            SELECT u.*, ui.status 
+            FROM user u 
+            LEFT JOIN user_info ui ON u.id = ui.u_id 
+            WHERE u.email = :email
+        ");
         $stmt->bindParam(':email', $email);
         $stmt->execute();
     
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
     
         // Check if user exists and verify the password
-        if ($user && password_verify($password, $user['password'])) {
-            // Set session variables after successful login
-            $_SESSION['user_id'] = $user['id'];
-            $_SESSION['email'] = $user['email'];
-            $_SESSION['role'] = $user['role'];
+        if ($user) {
+            if ($user['flag'] == 0) {
+                // Return an error response if the account is deleted
+                echo json_encode([
+                    'status' => 'error',
+                    'message' => 'Account deleted. Please contact support for assistance.',
+                    'icon' => 'error'
+                ]);
+            } elseif ($user['status'] == 0) {
+                // Return an error response if the account is disabled
+                echo json_encode([
+                    'status' => 'error',
+                    'message' => 'Account disabled. Please contact the admin.',
+                    'icon' => 'error'
+                ]);
+            } elseif (password_verify($password, $user['password'])) {
+                // Set session variables after successful login
+                $_SESSION['user_id'] = $user['id'];
+                $_SESSION['email'] = $user['email'];
+                $_SESSION['role'] = $user['role'];
     
-            // Return success response with a redirect URL
-            echo json_encode([
-                'icon' => 'success',
-                'status' => 'success',
-                'message' => 'Login successful! Redirecting...',
-                'redirect_url' => ($user['role'] == 2) ? 'admin.php' : 'home.php'
-                
-            ]);
+                // Return success response with a redirect URL
+                echo json_encode([
+                    'icon' => 'success',
+                    'status' => 'success',
+                    'message' => 'Login successful! Redirecting...',
+                    'redirect_url' => ($user['role'] == 2) ? 'admin.php' : 'home.php'
+                ]);
+            } else {
+                // If password verification fails, return an error response
+                echo json_encode([
+                    'status' => 'error',
+                    'message' => 'Invalid email or password.',
+                    'icon' => 'error'
+                ]);
+            }
         } else {
-            // If login fails, return an error response
+            // If user does not exist, return an error response
             echo json_encode([
                 'status' => 'error',
                 'message' => 'Invalid email or password.',
@@ -170,6 +197,7 @@ class userController
         // Make sure the script stops here
         exit();
     }
+    
     
     public function session() {
         session_start();

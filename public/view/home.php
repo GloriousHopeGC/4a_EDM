@@ -26,5 +26,6 @@ $currentUserId = $_SESSION['user_id'] ?? null;
     <nav id="userData"></nav>
     <div id="adminPost"></div>
     <div id="adminPostlist"></div>
+    <div class="col"></div>
 </body>
 </html>

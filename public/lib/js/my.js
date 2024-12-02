@@ -138,41 +138,55 @@ $(document).ready(function() {
                 `);
                 $('#userInfo').html(`
                    <div class="container mt-5">
-    <div class="card">
-        <div class="card-body">
-            <!-- Flex container to center the title and position the dropdown to the right -->
-            <div class="d-flex justify-content-between align-items-center">
-                <!-- Centered title with flex-grow to take remaining space -->
-                <h5 class="card-title mx-auto">User Details</h5>
-                <div class="dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="settingsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="bi bi-gear"></i>
-                    </a>
-                    <ul class="dropdown-menu" aria-labelledby="settingsDropdown" style="cursor: pointer;">
-                        <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#editModal"><i class="bi bi-pencil"></i> Edit Profile</a></li>
-                        <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#changePassword"><i class="bi bi-key"></i> Change Password</a></li>
-                        <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#changeEmailModal"><i class="bi bi-envelope"></i> Change Email</a></li>
-                    </ul>
+                        <div class="row">
+                            <!-- Left Column for User Info Card -->
+                                <div class="col-md-6 col-lg-4">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <!-- Flex container to center the title and position the dropdown to the right -->
+                                                <div class="d-flex justify-content-between align-items-center">
+                                            <!-- Centered title with flex-grow to take remaining space -->
+                                                <h5 class="card-title mx-auto">User Details</h5>
+                                                    <div class="dropdown">
+                                                        <a class="nav-link dropdown-toggle" href="#" id="settingsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                            <i class="bi bi-gear"></i>
+                                                        </a>
+                                                        <ul class="dropdown-menu" aria-labelledby="settingsDropdown" style="cursor: pointer;">
+                                                            <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#editModal"><i class="bi bi-pencil"></i> Edit Profile</a></li>
+                                                            <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#changePassword"><i class="bi bi-key"></i> Change Password</a></li>
+                                                            <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#changeEmailModal"><i class="bi bi-envelope"></i> Change Email</a></li>
+                                                            <li><a class="dropdown-item" data-action="delete-account"><i class="bi bi-trash"></i> Delete Account</a></li>
+                                                        </ul>
+                                            </div>
+                        </div>
+                        <div class="text-center mb-3">
+                            <img src="../lib/images/user_profile/${response.user_info.image_name}" alt="User Image" class="rounded-circle" style="width: 150px; height: 150px; object-fit: cover;" data-bs-toggle="modal" data-bs-target="#changeImageModal">
+                            <i class="fas fa-camera fa-2x" data-bs-toggle="modal" data-bs-target="#changeImageModal" style="cursor: pointer;"></i>
+                        </div>
+                        <div class="text-center">
+                            <p id="dummyText">Id: ${(response.user_info.u_id).toString().padStart(5, '0')}-${(new Date(response.user_info.created).getMonth() + 1).toString().padStart(3, '0')}-${new Date(response.user_info.created).getFullYear()}</p>
+                        </div>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item"><strong>Name:</strong> ${response.user_info.name}</li>
+                            <li class="list-group-item"><strong>Email:</strong>  ${response.user.email}</li>
+                            <li class="list-group-item"><strong>Gender:</strong> ${response.user_info.gender}</li>
+                            <li class="list-group-item"><strong>Birthday:</strong> ${response.user_info.birthday}</li>
+                            <li class="list-group-item"><strong>Age:</strong> ${calculateAge(response.user_info.birthday)}</li>
+                            <li class="list-group-item"><strong>Address:</strong> ${response.user_info.address}</li>
+                        </ul>
+                    </div>
                 </div>
             </div>
-            <div class="text-center mb-3">
-                <img src="../lib/images/user_profile/${response.user_info.image_name}" alt="User Image" class="rounded-circle" style="width: 150px; height: 150px; object-fit: cover;" data-bs-toggle="modal" data-bs-target="#changeImageModal">
-                <i class="fas fa-camera fa-2x" data-bs-toggle="modal" data-bs-target="#changeImageModal" style="cursor: pointer;"></i>
+
+            <!-- Right Column for User Posts -->
+            <div class="col-md-6 col-lg-8">
+            <div id="adminPostprofile"></div>
+                <div id="postsContainer" class="mt-3">
+                    <div id="postsLists"></div>
+                </div>
             </div>
-            <div class="text-center">
-                <p id="dummyText">Id: ${(response.user_info.u_id).toString().padStart(5, '0')}-${(new Date(response.user_info.created).getMonth() + 1).toString().padStart(3, '0')}-${new Date(response.user_info.created).getFullYear()}</p>
-            </div>
-            <ul class="list-group list-group-flush">
-                <li class="list-group-item"><strong>Name:</strong> ${response.user_info.name}</li>
-                <li class="list-group-item"><strong>Email:</strong>  ${response.user.email}</li>
-                <li class="list-group-item"><strong>Gender:</strong> ${response.user_info.gender}</li>
-                <li class="list-group-item"><strong>Birthday:</strong> ${response.user_info.birthday}</li>
-                <li class="list-group-item"><strong>Age:</strong> ${calculateAge(response.user_info.birthday)}</li>
-                <li class="list-group-item"><strong>Address:</strong> ${response.user_info.address}</li>
-            </ul>
         </div>
     </div>
-</div>
 
 
                     <!-- Change Password Modal -->
@@ -286,6 +300,221 @@ $(document).ready(function() {
                         </div>
                     </div>
                     `);
+                    $(document).ready(function () {
+                        // Event listener for the delete account option
+                        $(document).on('click', '.dropdown-item[data-action="delete-account"]', function () {
+                            Swal.fire({
+                                title: 'Are you sure?',
+                                text: "You won't be able to revert this action!",
+                                icon: 'warning',
+                                showCancelButton: true,
+                                confirmButtonColor: '#3085d6',
+                                cancelButtonColor: '#d33',
+                                confirmButtonText: 'Yes, delete it!',
+                                cancelButtonText: 'Cancel'
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    // AJAX request to delete the account
+                                    $.ajax({
+                                        url: '/edma/src/controller/delete_account.php', // The PHP script handling the deletion
+                                        type: 'POST',
+                                        data: { user_id: response.user_info.u_id }, // Send the user ID to the PHP script
+                                        success: function (response) {
+                                            // Parse the response
+                                            const result = JSON.parse(response);
+                                            if (result.success) {
+                                                Swal.fire({
+                                                    title: 'Deleted!',
+                                                    text: 'Your account has been successfully deleted.',
+                                                    icon: 'success',
+                                                    confirmButtonText: 'OK'
+                                                }).then(() => {
+                                                    // Redirect to login page
+                                                    window.location.href = "login.php";
+                                                });
+                                            } else {
+                                                Swal.fire({
+                                                    title: 'Error!',
+                                                    text: result.message || 'An error occurred while deleting your account.',
+                                                    icon: 'error',
+                                                    confirmButtonText: 'OK'
+                                                });
+                                            }
+                                        },
+                                        error: function () {
+                                            Swal.fire({
+                                                title: 'Error!',
+                                                text: 'Failed to delete the account. Please try again later.',
+                                                icon: 'error',
+                                                confirmButtonText: 'OK'
+                                            });
+                                        }
+                                    });
+                                }
+                            });
+                        });
+                    });
+                    
+                    $('#adminPostprofile').html(`
+                        <div class="d-flex justify-content-center">
+                          <div class="card shadow-sm" style="width: 100%; max-width: 500px; border-radius: 10px;">
+                              <div class="card-body d-flex align-items-center">
+                                  <!-- Profile Picture -->
+                                      <img src="../lib/images/user_profile/${response.user_info.image_name}" alt="Profile Picture" class="rounded-circle" style="width: 40px; height: 40px; margin-right: 10px;">
+                                  <!-- Input-like Button -->
+                                      <button id="openModalBtn" data-bs-toggle="modal" data-bs-target="#postModal" class="btn btn-outline-white flex-grow-1 text-start d-flex align-items-center" style="border-radius: 20px; padding: 10px 15px; ; border-color: #444;">Post Now, ${response.user_info.name}</button>
+                              </div>
+                          </div>
+                      </div>
+                      <!-- Modal HTML -->
+                      <div id="postModal" class="modal fade" tabindex="-1" aria-labelledby="postModalLabel" aria-hidden="true">
+                          <div class="modal-dialog">
+                              <div class="modal-content">
+                                  <div class="modal-header">
+                                      <h5 class="modal-title" id="postModalLabel">Create Post</h5>
+                                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                  </div>
+                                  <div class="modal-body">
+                                      <form id="postForm" method="POST" enctype="multipart/form-data">
+                                          <input type="hidden" name="u_id" value="${response.user_info.u_id}">
+                                          <input type="hidden" name="ui_id" value="${response.user_info.id}">
+                                      <div class="mb-3">
+                                          <label for="postContent" class="form-label">What Do You Want To Post?</label>
+                                          <textarea class="form-control" id="postContent" name="postContent" rows="4"></textarea>
+                                      </div>
+                                      <div class="mb-3 d-flex align-items-center">
+                                      <!-- Icon-Based Upload Button -->
+                                          <label for="postFile" class="btn btn-outline-white d-flex align-items-center" style="cursor: pointer;">
+                                          <i class="bi bi-paperclip" style="font-size: 1.2rem;"></i>
+                                      </label>
+                                          <label for="postFile" class="btn btn-outline-white d-flex align-items-center" style="cursor: pointer;">
+                                          <i class="bi bi-image" style="font-size: 1.2rem;"></i>
+                                      </label>
+                                          <input type="file" id="postFile" name="postFile" style="display: none;">
+                                          <span id="fileName" class="ms-3 text-muted"></span>
+                                      </div>
+                                      <button type="submit" class="btn btn-primary">Create Post</button>
+                                      </form>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>`); 
+
+                      handleFileInputChange();
+                      function handleFileInputChange() {
+                          const fileInput = document.getElementById('postFile');
+                          if (fileInput) {
+                              fileInput.addEventListener('change', function () {
+                                  const fileNameSpan = document.getElementById('fileName');
+                                  fileNameSpan.textContent = this.files.length > 0 ? this.files[0].name : 'No file chosen';
+                              });
+                          }
+                      }
+                      
+                    $('#adminPostlists').html(`
+                        <div id="postsContainer" class="mt-2">
+                             <div id="postsLists"></div>
+                         </div>
+                     `);
+                     $(document).ready(function () {
+                        // Fetch posts for the current user
+                        function loadAdminPosts() {
+                            const currentUserId = $('meta[name="current-user-id"]').attr('content'); // Get user ID from meta tag
+                            
+                            $.ajax({
+                                url: '/edma/src/controller/fetch_post.php', // Backend endpoint
+                                method: 'GET',
+                                dataType: 'json',
+                                success: function (response) {
+                                    if (response.error) {
+                                        $('#adminPostlists').html(`<p class="text-danger">${response.error}</p>`);
+                                    } else {
+                                        const posts = response.posts;
+                                        let postsHtml = '';
+                    
+                                        if (posts.length > 0) {
+                                            posts.forEach(post => {
+                                                const formattedDate = formatDateTo12Hour(post.created_at); // Assume `formatDateTo12Hour` is implemented
+                    
+                                                postsHtml += `
+                                                   ${post.u_id == currentUserId ? `  <div class="card mb-3" style="max-width: 540px; margin: auto;">
+                                                                <div class="card-body">
+                                                                    <div class="d-flex align-items-center mb-3">
+                                                                        <img src="../../public/lib/images/user_profile/${post.image_name}" alt="${post.admin_name}" class="img-fluid rounded-circle" style="width: 40px; height: 40px; margin-right: 10px;">
+                                                                        <h6 class="card-title text-truncate">${post.admin_name || 'Unknown'}</h5>
+                                                                    </div>
+                            
+                                                                   <p class="card-text text-truncate">${post.content}</p>
+                                                            <small class="text-muted d-block mb-3">Posted on ${formattedDate}</small>
+                        
+                                                            <!-- Media Display -->
+                                                            ${post.file_name && post.file_type.startsWith('image/') ? 
+                                                                `<img src="../../public/lib/images/posts/${post.file_name}" alt="${post.title}" class="img-fluid rounded mb-3 full-width-media" style="max-width: 100%; height: auto;">`
+                                                            : post.file_type === 'video/mp4' ? 
+                                                                `<video controls class="w-100 rounded mb-3 full-width-media">
+                                                                    <source src="../../public/lib/images/posts/${post.file_name}" type="video/mp4">
+                                                                    Your browser does not support the video tag.
+                                                                </video>`
+                                                            : post.file_type === 'audio/mpeg' || post.file_type === 'audio/wav' ? 
+                                                                `<audio controls class="w-100 rounded mb-3 full-width-media">
+                                                                    <source src="../../public/lib/images/posts/${post.file_name}" type="${post.file_type}">
+                                                                    Your browser does not support the audio element.
+                                                                </audio>`
+                                                                : post.file_name && 
+                                                                (post.file_type === 'application/pdf' || 
+                                                                post.file_type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' || 
+                                                                post.file_type === 'application/vnd.openxmlformats-officedocument.presentationml.presentation') ?
+                                                                // Check file type and display its name instead of "Download File"
+                                                                `<a href="../../public/lib/images/posts/${post.file_name}"target="_blank" class="btn btn-link">${post.file_name.replace(/^\d+_/, '')}</a>`
+                                                            : post.file_name ? 
+                                                                `<p class="mb-0">
+                                                                    <a href="../../public/lib/images/posts/${post.file_name}" target="_blank" class="btn btn-link">Download File</a>
+                                                                </p>`
+                                                            : ''}
+                            
+                                                                    <input type="hidden" name="user_id" value="${post.u_id}">
+                            
+                                                                    <!-- Dropdown for delete and edit actions -->
+                                                                    ${post.u_id == currentUserId ? `
+                                                                        <div class="dropdown position-absolute top-0 end-0 p-2">
+                                                                            <i class="bi bi-three-dots mr-3" style="font-size: 20px;" data-bs-toggle="dropdown" aria-expanded="false"></i>
+                                                                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                                                                <li><a class="dropdown-item edit-post" href="#" data-post-id="${post.post_id}" data-post-content="${post.content}" data-post-file="${post.file_name}">Edit</a></li>
+                                                                                <li><a class="dropdown-item delete-post" href="#" data-post-id="${post.post_id}">Delete</a></li>
+                                                                            </ul>
+                                                                        </div>
+                                                                    ` : ''}
+                                                                </div>
+                                                            </div>
+                                                        ` : ''}
+                                                        </div>
+                                                    </div>
+                                                `;
+                                            });
+                                        } else {
+                                            postsHtml = '<p>No posts available.</p>';
+                                        }
+                    
+                                        $('#postsLists').html(postsHtml);
+                                    }
+                                },
+                                error: function () {
+                                    $('#adminPostlists').html('<p class="text-danger">Error fetching posts. Please try again later.</p>');
+                                }
+                            });
+                        }
+                    
+                        // Initialize admin posts
+                        loadAdminPosts();
+                    
+                        // Helper function to format date
+                        function formatDateTo12Hour(dateString) {
+                            const date = new Date(dateString);
+                            const options = { hour: '2-digit', minute: '2-digit', hour12: true };
+                            return date.toLocaleDateString('en-US', options);
+                        }
+                    });
+                    
 
                         $('#adminPost').html(`
                           <div class="d-flex justify-content-center mt-4">
@@ -401,7 +630,7 @@ $(document).ready(function() {
                                                                 <div class="card-body">
                                                                     <div class="d-flex align-items-center mb-3">
                                                                         <img src="../../public/lib/images/user_profile/${post.image_name}" alt="${post.admin_name}" class="img-fluid rounded-circle" style="width: 40px; height: 40px; margin-right: 10px;">
-                                                                        <h6 class="card-title text-truncate">${post.admin_name || 'Unknown'}</h5>
+                                                                        <h6 class="card-title text-truncate user-name" data-user-id="${post.u_id}">${post.admin_name || 'Unknown'}</h6> <!-- User name with data-user-id -->
                                                                     </div>
                             
                                                                    <p class="card-text text-truncate">${post.content}</p>
@@ -477,6 +706,10 @@ $(document).ready(function() {
                                     return date.toLocaleString('en-US', options);
                                 }
                                 
+                                $(document).on('click', '.user-name', function() {
+                                    const userId = $(this).data('user-id'); // Get the user ID from the clicked name
+                                    window.location.href = `../view/update_user.php?id=${userId}?id=${userId}`; // Redirect to the user's profile page with the user ID as a query parameter
+                                });
                                 function deletePost(postId) {
                                     console.log("Deleting post with ID:", postId); // Log the ID before making the AJAX call
                                 

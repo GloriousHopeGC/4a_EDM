@@ -12,7 +12,7 @@ if (isset($userData['error'])) {
 $user = $userData['user'];
 $user_info = $userData['user_info'];
 $controller->handleLogoutAction(); 
-
+$currentUserId = $_SESSION['user_id'] ?? null;
 ?>
 
 <!DOCTYPE html>
@@ -35,9 +35,11 @@ $controller->handleLogoutAction();
     <link rel="stylesheet" href="/4a_edma/public/lib/css/sweetalert2.min.css">
     <script defer src="/4a_edma/public/lib/js/sweetalert2.all.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <meta name="current-user-id" content="<?php echo htmlspecialchars($currentUserId, ENT_QUOTES, 'UTF-8'); ?>">
 </head>
 <body>
     <nav id="userData"></nav>
     <div id="userInfo"></div>
+    <div id="adminPostlists"></div>
 </body>
 </html>
