@@ -38,6 +38,10 @@ $controller->session();
                 <div class="register-link text-center mt-3">
                     <p>Don't have an account? <a href="register.php" class="no-underline">Register</a></p>
                 </div>
+                <div class="forgot-password-link text-center mt-3">
+                    <p><a href="process_forgot_password.php" class="no-underline">Forgot Password?</a></p>
+                </div>
+
             </div>
         </div>
     </div>

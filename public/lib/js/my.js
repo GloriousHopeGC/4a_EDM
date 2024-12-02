@@ -105,37 +105,132 @@ $(document).ready(function() {
             } else {
                 $('#userData').html(`
                 <nav class="navbar navbar-expand-lg navbar-light bg-light">
-                <div class="container">
-                    <a class="navbar-brand" href="update_user.php">${response.user_info.name}</a>
-                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-                    <div class="collapse navbar-collapse" id="navbarNav">
-                        <ul class="navbar-nav ms-auto">
-                            <li class="nav-item">
-                                <a class="nav-link active" aria-current="page" href="home.php">Home</a>
-                            </li>
-                            <li class="nav-item d-block d-lg-none">
-                                <a class="nav-link" href="update_user.php">Profile</a>
-                            </li>
-                            <li class="nav-item d-block d-lg-none">
-                                <a class="nav-link" href="#" onclick="confirmLogout()">Logout</a>
-                            </li>
-                            <!-- Dropdown Menu -->
-                            <li class="nav-item dropdown d-none d-lg-block">
-                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <img src="../lib/images/user_profile/${response.user_info.image_name}" alt="Profile" class="rounded-circle" style="width: 30px; height: 30px;">
-                                </a>
-                                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                    <li><a class="dropdown-item" href="update_user.php"><i class="bi-person-circle"></i> Profile</a></li>
-                                    <li><a class="dropdown-item" href="#" onclick="confirmLogout()"><i class="bi bi-door-open"></i> Log-out</a></li>
-                                </ul>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </nav>
+    <div class="container">
+        <a class="navbar-brand" href="update_user.php">${response.user_info.name}</a>
+        <button
+            class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarNav"
+            aria-controls="navbarNav"
+            aria-expanded="false"
+            aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav mx-auto"> <!-- Center the items -->
+                <li class="nav-item d-flex align-items-center">
+                    <form class="d-flex" id="searchForm" method="GET">
+                        <input
+                            class="form-control me-2"
+                            type="search"
+                            placeholder="Search"
+                            aria-label="Search"
+                            name="query"
+                            style="min-width: 280px;"
+                        />
+                        <button class="btn btn-outline-success" type="submit">Search</button>
+                    </form>
+                </li>
+            </ul>
+            <ul class="navbar-nav ms-auto"> <!-- Right-aligned items -->
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="home.php">Home</a>
+                </li>
+                <li class="nav-item d-block d-lg-none">
+                    <a class="nav-link" href="update_user.php">Profile</a>
+                </li>
+                <li class="nav-item d-block d-lg-none">
+                    <a class="nav-link" href="#" onclick="confirmLogout()">Logout</a>
+                </li>
+                <!-- Dropdown Menu -->
+                <li class="nav-item dropdown d-none d-lg-block">
+                    <a
+                        class="nav-link dropdown-toggle"
+                        href="#"
+                        id="navbarDropdown"
+                        role="button"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false">
+                        <img
+                            src="../lib/images/user_profile/${response.user_info.image_name}"
+                            alt="Profile"
+                            class="rounded-circle"
+                            style="width: 30px; height: 30px;" />
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <li>
+                            <a class="dropdown-item" href="update_user.php">
+                                <i class="bi-person-circle"></i> Profile
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="#" onclick="confirmLogout()">
+                                <i class="bi bi-door-open"></i> Log-out
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
                 `);
+                $('#searchForm input[name="query"]').on('input', function(e) {
+                    var query = $(this).val().trim();  // Get the value of the input and remove any extra spaces
+                
+                    // Log the query to debug
+                    console.log("Search Query: ", query);
+                
+                    if (!query) {
+                        $('#searchResults').html('');  // Clear results when there's no query
+                        $('#adminPostlist').show();  // Show the admin post list if search box is empty
+                        $('#adminPost').show();      // Show the admin post content if search box is empty
+                        return;
+                    }
+                
+                    // Hide the admin post list when searching
+                    $('#adminPostlist').hide();  
+                    $('#adminPost').hide(); 
+                    $('#userInfo').hide();  
+                
+                    $.ajax({
+                        url: '/edma/src/controller/searchdata.php',  // Make sure this file is processing the search correctly
+                        type: 'GET',
+                        dataType: 'json',
+                        data: { query: query },
+                        success: function(response) {
+                            var resultsHtml = '';
+                            if (response.data && response.data.length > 0) {
+                                resultsHtml = '<table class="table table-striped"><thead><tr><th></th><th></th></tr></thead><tbody>';
+                                response.data.forEach(function(row) {
+                                    resultsHtml += `
+                                      <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <img src="../lib/images/user_profile/${row.image_name}" alt="${row.name}" class="rounded-circle" style="width: 50px; height: 50px; margin-right: 10px;">
+                                                <span style="color: #333;">${row.name}</span>
+                                            </div>
+                                        </td>
+                                      </tr>
+                                    `;
+                                });
+                                resultsHtml += '</tbody></table>';
+                            } else {
+                                resultsHtml = '<p>No Users Found.</p>';
+                            }
+                            $('#searchResults').html(resultsHtml);
+                        },
+                        error: function(xhr, status, error) {
+                            console.error("AJAX Error: ", status, error);
+                            $('#searchResults').html('<div class="alert alert-danger">There was an error with the search request.</div>');
+                        }
+                    });
+                });
+                
+                
+                
                 $('#userInfo').html(`
                    <div class="container mt-5">
                         <div class="row">
@@ -357,7 +452,7 @@ $(document).ready(function() {
                     
                     $('#adminPostprofile').html(`
                         <div class="d-flex justify-content-center">
-                          <div class="card shadow-sm" style="width: 100%; max-width: 500px; border-radius: 10px;">
+                          <div class="card shadow-sm  mt-3" style="width: 100%; max-width: 540px; border-radius: 10px;">
                               <div class="card-body d-flex align-items-center">
                                   <!-- Profile Picture -->
                                       <img src="../lib/images/user_profile/${response.user_info.image_name}" alt="Profile Picture" class="rounded-circle" style="width: 40px; height: 40px; margin-right: 10px;">
@@ -518,7 +613,7 @@ $(document).ready(function() {
 
                         $('#adminPost').html(`
                           <div class="d-flex justify-content-center mt-4">
-                            <div class="card shadow-sm" style="width: 100%; max-width: 500px; border-radius: 10px;">
+                            <div class="card shadow-sm" style="width: 100%; max-width: 540px; border-radius: 10px;">
                                 <div class="card-body d-flex align-items-center">
                                     <!-- Profile Picture -->
                                         <img src="../lib/images/user_profile/${response.user_info.image_name}" alt="Profile Picture" class="rounded-circle" style="width: 40px; height: 40px; margin-right: 10px;">
@@ -630,7 +725,7 @@ $(document).ready(function() {
                                                                 <div class="card-body">
                                                                     <div class="d-flex align-items-center mb-3">
                                                                         <img src="../../public/lib/images/user_profile/${post.image_name}" alt="${post.admin_name}" class="img-fluid rounded-circle" style="width: 40px; height: 40px; margin-right: 10px;">
-                                                                        <h6 class="card-title text-truncate user-name" data-user-id="${post.u_id}">${post.admin_name || 'Unknown'}</h6> <!-- User name with data-user-id -->
+                                                                      <h6 class="card-title text-truncate user-name" data-user-id="${post.u_id}" style="cursor: pointer;">${post.admin_name || 'Unknown'}</h6>
                                                                     </div>
                             
                                                                    <p class="card-text text-truncate">${post.content}</p>
@@ -706,10 +801,21 @@ $(document).ready(function() {
                                     return date.toLocaleString('en-US', options);
                                 }
                                 
-                                $(document).on('click', '.user-name', function() {
+                                
+                                $(document).on('click', '.user-name', function () {
                                     const userId = $(this).data('user-id'); // Get the user ID from the clicked name
-                                    window.location.href = `../view/update_user.php?id=${userId}?id=${userId}`; // Redirect to the user's profile page with the user ID as a query parameter
+                                    const currentUserId = $('meta[name="current-user-id"]').attr('content'); // Get the currently logged-in user's ID from the meta tag
+                                
+                                    if (userId == currentUserId) {
+                                        // Redirect to update_user.php if the IDs match
+                                        window.location.href = '../view/update_user.php';
+                                    } else {
+                                        // Otherwise, redirect to the profile page
+                                        window.location.href = `../view/update_profile.php?id=${userId}`;
+                                    }
                                 });
+                                
+                                
                                 function deletePost(postId) {
                                     console.log("Deleting post with ID:", postId); // Log the ID before making the AJAX call
                                 
@@ -877,6 +983,7 @@ $(document).ready(function() {
                         
                             return age;
                         }
+                        
                         
                         
                         $('#postForm').on('submit', function(e) {

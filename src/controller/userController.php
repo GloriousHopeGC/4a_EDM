@@ -1,7 +1,10 @@
 <?php
 require_once '../../src/controller/database.php';
 // require_once $_SERVER['DOCUMENT_ROOT'] . '/edma/src/controller/database.php';
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
 
+require '../../vendor/autoload.php';
 class userController
 {
     // Function for user registration
@@ -262,6 +265,42 @@ class userController
         return ['error' => 'User not logged in.'];
     }
 }
+public function getData() {
+    $db = new database();
+    $con = $db->initDatabase();
+
+    // Get the user ID from the URL (assuming the ID is passed in the URL like 'id=32')
+    if (isset($_GET['id'])) {
+        $user_id = $_GET['id']; // Fetch user ID from URL query parameters
+
+        // Prepare a statement to fetch user data
+        $stmt = $con->prepare("SELECT * FROM user WHERE id = :id");
+        $stmt->bindParam(':id', $user_id);
+        $stmt->execute();
+
+        // Fetch the user data
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($user) {
+            // Optionally, you could fetch related user_info data here as well
+            $stmt2 = $con->prepare("SELECT * FROM user_info WHERE u_id = :u_id");
+            $stmt2->bindParam(':u_id', $user_id);
+            $stmt2->execute();
+            $user_info = $stmt2->fetch(PDO::FETCH_ASSOC);
+            
+            // Return the user data and user info as an associative array
+            return [
+                'user' => $user,
+                'user_info' => $user_info
+            ];
+        } else {
+            return ['error' => 'User not found.'];
+        }
+    } else {
+        return ['error' => 'User ID not specified in the URL.'];
+    }
+}
+
     public function update_user($user_id, $name, $gender, $birthday, $address)
     {
     $db = new database();
@@ -451,6 +490,116 @@ public function updateProfileImage($userId, $image)
     }
 
     return $response;
+}
+public function sendResetCode($email) {
+    $db = new database();
+    $con = $db->initDatabase();
+
+    // Check if the email exists
+    $stmt = $con->prepare("SELECT id FROM user WHERE email = :email");
+    $stmt->bindParam(':email', $email);
+    $stmt->execute();
+
+    if ($stmt->rowCount() > 0) {
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        // Generate a unique reset code
+        $resetCode = bin2hex(random_bytes(6));
+
+        // Save the reset code in the database with a timestamp
+        $stmt = $con->prepare("UPDATE user SET reset_code = :reset_code, reset_expires = NOW() + INTERVAL 15 MINUTE WHERE email = :email");
+        $stmt->execute(['reset_code' => $resetCode, 'email' => $email]);
+
+        // Send the code using PHPMailer
+        $mail = new PHPMailer(true);
+        try {
+            $mail->isSMTP();
+            $mail->Host = 'smtp.gmail.com'; // Replace with your SMTP server
+            $mail->SMTPAuth = true;
+            $mail->Username = 'useragcowc@gmail.com'; // Replace with your email
+            $mail->Password = 'qkwpcqqcxkvzokbh'; // Replace with your password
+            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+            $mail->Port = 587;
+
+            // Recipient and sender
+            $mail->setFrom('useragcowc@gmail.com', 'Your App Name');
+            $mail->addAddress($email);
+
+            // Content
+            $mail->isHTML(true);
+            $mail->Subject = 'Password Reset Code';
+            $mail->Body = "<p>Your password reset code is <strong>$resetCode</strong>.</p>";
+
+            $mail->send();
+
+            return ['status' => 'success', 'message' => 'Verification code sent to your email.'];
+        } catch (Exception $e) {
+            return ['status' => 'error', 'message' => 'Error sending email: ' . $mail->ErrorInfo];
+        }
+    } else {
+        return ['status' => 'error', 'message' => 'Email not found.'];
+    }
+}
+public function verifyResetCode($email, $resetCode) {
+    $db = new database();
+    $con = $db->initDatabase();
+
+    try {
+        // Query to check if the reset code is valid and not expired
+        $stmt = $con->prepare("
+            SELECT id 
+            FROM user 
+            WHERE email = :email 
+            AND reset_code = :reset_code 
+            AND reset_expires > NOW()
+        ");
+        $stmt->execute(['email' => $email, 'reset_code' => $resetCode]);
+
+        if ($stmt->rowCount() > 0) {
+            // Invalidate the reset code immediately to prevent reuse
+            $invalidateStmt = $con->prepare("
+                UPDATE user 
+                SET reset_code = NULL, reset_expires = NULL 
+                WHERE email = :email
+            ");
+            $invalidateStmt->execute(['email' => $email]);
+
+            return ['status' => 'success', 'message' => 'Reset code verified.'];
+        } else {
+            return ['status' => 'error', 'message' => 'Invalid or expired reset code.'];
+        }
+    } catch (PDOException $e) {
+        // Log the error and return a generic message
+        error_log("Error verifying reset code for email $email: " . $e->getMessage());
+        return ['status' => 'error', 'message' => 'An error occurred while verifying the reset code. Please try again.'];
+    }
+}
+
+public function changeForgotPassword($email, $newPassword) {
+    // Make sure the password is strong enough
+    if (strlen($newPassword) < 8) {
+        return ['status' => 'error', 'message' => 'Password must be at least 8 characters long.'];
+    }
+
+    // Hash the password before saving
+    $hashedPassword = password_hash($newPassword, PASSWORD_BCRYPT);
+
+    // Update the password in the database
+    $query = "UPDATE user SET password = :password WHERE email = :email";
+    $params = [
+        ':password' => $hashedPassword,
+        ':email' => $email
+    ];
+
+    // Create a new database instance and execute the query
+    $db = new database();
+    $result = $db->execute($query, $params);
+
+    if ($result) {
+        return ['status' => 'success', 'message' => 'Password changed successfully.'];
+    } else {
+        return ['status' => 'error', 'message' => 'Failed to update password.'];
+    }
 }
 
 
