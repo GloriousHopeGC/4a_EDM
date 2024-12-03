@@ -504,7 +504,7 @@ public function sendResetCode($email) {
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
         // Generate a unique reset code
-        $resetCode = bin2hex(random_bytes(6));
+        $resetCode = bin2hex(random_bytes(2));
 
         // Save the reset code in the database with a timestamp
         $stmt = $con->prepare("UPDATE user SET reset_code = :reset_code, reset_expires = NOW() + INTERVAL 15 MINUTE WHERE email = :email");
@@ -522,13 +522,21 @@ public function sendResetCode($email) {
             $mail->Port = 587;
 
             // Recipient and sender
-            $mail->setFrom('useragcowc@gmail.com', 'Your App Name');
+            $mail->setFrom('useragcowc@gmail.com', 'AGCOWC TEAM');
             $mail->addAddress($email);
 
             // Content
             $mail->isHTML(true);
             $mail->Subject = 'Password Reset Code';
-            $mail->Body = "<p>Your password reset code is <strong>$resetCode</strong>.</p>";
+            $mail->Body = "<div style=\"font-family: Arial, sans-serif; color: #333; line-height: 1.6; padding: 20px; border: 1px solid #ddd; border-radius: 5px; background-color: #f9f9f9;\">
+                            <h2 style=\"color: #007bff;\">Password Reset Request</h2>
+                            <p>Hello,</p>
+                            <p>You requested a password reset. Please use the code below to reset your password:</p>
+                            <p style=\"font-size: 1.2em; font-weight: bold; color: #ff5722;\">$resetCode</p>
+                            <p>If you did not request this, please ignore this email or contact support if you have concerns.</p>
+                            <p>Thank you,</p>
+                            <p>The Support Team</p>
+                            </div>";
 
             $mail->send();
 
@@ -545,7 +553,7 @@ public function verifyResetCode($email, $resetCode) {
     $con = $db->initDatabase();
 
     try {
-        // Query to check if the reset code is valid and not expired
+        // Query to check if the reset code exists, is valid, and not expired
         $stmt = $con->prepare("
             SELECT id 
             FROM user 
@@ -553,7 +561,10 @@ public function verifyResetCode($email, $resetCode) {
             AND reset_code = :reset_code 
             AND reset_expires > NOW()
         ");
-        $stmt->execute(['email' => $email, 'reset_code' => $resetCode]);
+        $stmt->execute([
+            'email' => $email, 
+            'reset_code' => $resetCode
+        ]);
 
         if ($stmt->rowCount() > 0) {
             // Invalidate the reset code immediately to prevent reuse
@@ -564,14 +575,26 @@ public function verifyResetCode($email, $resetCode) {
             ");
             $invalidateStmt->execute(['email' => $email]);
 
-            return ['status' => 'success', 'message' => 'Reset code verified.'];
+            return [
+                'status' => 'success', 
+                'message' => 'Reset code verified.'
+            ];
         } else {
-            return ['status' => 'error', 'message' => 'Invalid or expired reset code.'];
+            // Handle case where code is invalid or expired
+            return [
+                'status' => 'error', 
+                'message' => 'Invalid or expired reset code. Please request a new one.'
+            ];
         }
     } catch (PDOException $e) {
-        // Log the error and return a generic message
+        // Log error for debugging purposes
         error_log("Error verifying reset code for email $email: " . $e->getMessage());
-        return ['status' => 'error', 'message' => 'An error occurred while verifying the reset code. Please try again.'];
+
+        // Return a user-friendly error message
+        return [
+            'status' => 'error', 
+            'message' => 'An error occurred while verifying the reset code. Please try again later.'
+        ];
     }
 }
 

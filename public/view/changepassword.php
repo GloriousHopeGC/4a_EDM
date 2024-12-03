@@ -1,10 +1,5 @@
 <?php
-
 session_start();
-echo '<pre>';
-print_r($_SESSION);
-echo '</pre>';
-
 // Check if the user is allowed to access the page
 if (!isset($_SESSION['reset_verified']) || $_SESSION['reset_verified'] !== true) {
     // Redirect to the forgot password page if the code is not verified
