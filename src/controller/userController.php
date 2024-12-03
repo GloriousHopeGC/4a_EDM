@@ -528,15 +528,33 @@ public function sendResetCode($email) {
             // Content
             $mail->isHTML(true);
             $mail->Subject = 'Password Reset Code';
-            $mail->Body = "<div style=\"font-family: Arial, sans-serif; color: #333; line-height: 1.6; padding: 20px; border: 1px solid #ddd; border-radius: 5px; background-color: #f9f9f9;\">
-                            <h2 style=\"color: #007bff;\">Password Reset Request</h2>
-                            <p>Hello,</p>
-                            <p>You requested a password reset. Please use the code below to reset your password:</p>
-                            <p style=\"font-size: 1.2em; font-weight: bold; color: #ff5722;\">$resetCode</p>
-                            <p>If you did not request this, please ignore this email or contact support if you have concerns.</p>
-                            <p>Thank you,</p>
-                            <p>The Support Team</p>
-                            </div>";
+            $mail->Body = "  <div style=\"font-family: Arial, sans-serif; margin: 0 auto; max-width: 600px; border: 1px solid #ddd; border-radius: 10px; background-color: #ffffff; padding: 20px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);\">
+                                <div style=\"text-align: center; padding-bottom: 20px;\">
+                                    <h2 style=\"color: #007bff; font-size: 1.5em; margin: 0;\">Password Reset</h2>
+                                        <p style=\"color: #555; margin-top: 5px;\">Secure your account</p>
+                                </div>
+                                    <hr style=\"border: none; border-top: 1px solid #ddd; margin: 20px 0;\" />
+        <p style=\"color: #333; font-size: 1em; line-height: 1.6; margin-bottom: 20px;\">
+            Hi there,
+        </p>
+        <p style=\"color: #333; font-size: 1em; line-height: 1.6; margin-bottom: 20px;\">
+            You recently requested to reset your password. Please use the code below to complete the process:
+        </p>
+        <div style=\"background-color: #f7f7f7; border: 1px dashed #ccc; padding: 15px; border-radius: 8px; text-align: center; margin: 20px 0;\">
+            <span style=\"font-size: 1.5em; font-weight: bold; color: #ff5722;\">$resetCode</span>
+        </div>
+        <p style=\"color: #333; font-size: 1em; line-height: 1.6;\">
+            If you did not request a password reset, please ignore this email or contact our support team if you have any concerns.
+        </p>
+        <p style=\"color: #333; font-size: 1em; line-height: 1.6; margin-top: 30px;\">
+            Best regards,<br />
+            <strong>The Support Team</strong>
+        </p>
+        <hr style=\"border: none; border-top: 1px solid #ddd; margin: 20px 0;\" />
+        <p style=\"color: #aaa; font-size: 0.9em; text-align: center;\">
+            This is an automated email, please do not reply.
+        </p>
+    </div>";
 
             $mail->send();
 
