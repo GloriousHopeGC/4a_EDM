@@ -107,32 +107,10 @@ $(document).ready(function() {
                 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container">
         <a class="navbar-brand" href="update_user.php">${response.user_info.name}</a>
-        <button
-            class="navbar-toggler"
-            type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#navbarNav"
-            aria-controls="navbarNav"
-            aria-expanded="false"
-            aria-label="Toggle navigation">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav mx-auto"> <!-- Center the items -->
-                <li class="nav-item d-flex align-items-center">
-                    <form class="d-flex" id="searchForm" method="GET">
-                        <input
-                            class="form-control me-2"
-                            type="search"
-                            placeholder="Search"
-                            aria-label="Search"
-                            name="query"
-                            style="min-width: 280px;"
-                        />
-                        <button class="btn btn-outline-success" type="submit">Search</button>
-                    </form>
-                </li>
-            </ul>
             <ul class="navbar-nav ms-auto"> <!-- Right-aligned items -->
                 <li class="nav-item">
                     <a class="nav-link active" aria-current="page" href="home.php">Home</a>
@@ -175,6 +153,15 @@ $(document).ready(function() {
         </div>
     </div>
 </nav>
+
+                `);
+                $('#searchBar').html(`
+                    <div class="d-flex justify-content-center mt-3">
+                        <form class="d-flex" id="searchForm" method="GET" style="max-width: 542px; width: 100%;">
+                            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name="query" style="min-width: 280px; width: 100%;"/>
+                            <button class="btn btn-outline-success" type="submit">Search</button>
+                        </form>
+                    </div>
 
                 `);
                 $('#searchForm input[name="query"]').on('input', function(e) {

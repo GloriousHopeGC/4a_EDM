@@ -504,7 +504,7 @@ public function sendResetCode($email) {
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
         // Generate a unique reset code
-        $resetCode = bin2hex(random_bytes(2));
+        $resetCode = mt_rand(1000, 9999);  // Generates a random 4-digit number
 
         // Save the reset code in the database with a timestamp
         $stmt = $con->prepare("UPDATE user SET reset_code = :reset_code, reset_expires = NOW() + INTERVAL 15 MINUTE WHERE email = :email");

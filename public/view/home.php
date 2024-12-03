@@ -24,9 +24,9 @@ $currentUserId = $_SESSION['user_id'] ?? null;
 </head>
 <body>
     <nav id="userData"></nav>
+    <div id="searchBar"></div>
     <div id="searchResults"></div>
     <div id="adminPost"></div>
     <div id="adminPostlist"></div>
-    
 </body>
 </html>

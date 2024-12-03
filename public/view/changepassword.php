@@ -2,101 +2,117 @@
 session_start();
 // Check if the user is allowed to access the page
 if (!isset($_SESSION['reset_verified']) || $_SESSION['reset_verified'] !== true) {
-    // Redirect to the forgot password page if the code is not verified
     header('Location: process_forgot_password.php');
     exit();
 }
 
 require_once '../../src/controller/userController.php';
 
+$alertScript = '';
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $newPassword = isset($_POST['new_password']) ? $_POST['new_password'] : '';
     $confirmPassword = isset($_POST['confirm_password']) ? $_POST['confirm_password'] : '';
     $email = $_SESSION['email']; // Get email from session
 
-    // Validate and update password
     if (!empty($newPassword) && !empty($confirmPassword)) {
         if ($newPassword === $confirmPassword) {
             $controller = new userController();
             $response = $controller->changeForgotPassword($email, $newPassword);
             if ($response['status'] === 'success') {
-                echo "<script>alert('Password successfully changed.');</script>";
-                unset($_SESSION['reset_verified']); // Clear session after successful password change
-                header('Location: login.php');
-                exit();
+                // SweetAlert for success
+                $alertScript = "
+                    <script>
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success!',
+                            text: 'Password successfully changed.',
+                            confirmButtonText: 'OK'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                window.location = 'login.php';
+                            }
+                        });
+                    </script>
+                ";
+                unset($_SESSION['reset_verified']);
             } else {
-                echo "<script>alert('Error changing password: {$response['message']}');</script>";
+                // SweetAlert for error
+                $alertScript = "
+                    <script>
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error!',
+                            text: 'Error changing password: {$response['message']}'
+                        });
+                    </script>
+                ";
             }
         } else {
-            echo "<script>alert('Passwords do not match.');</script>";
+            // SweetAlert for mismatched passwords
+            $alertScript = "
+                <script>
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Warning!',
+                        text: 'Passwords do not match.'
+                    });
+                </script>
+            ";
         }
     } else {
-        echo "<script>alert('Please fill in all fields.');</script>";
+        // SweetAlert for empty fields
+        $alertScript = "
+            <script>
+                Swal.fire({
+                    icon: 'info',
+                    title: 'Notice',
+                    text: 'Please fill in all fields.'
+                });
+            </script>
+        ";
     }
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Change Password</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-        }
-        .container {
-            width: 100%;
-            max-width: 400px;
-            margin: 50px auto;
-            padding: 20px;
-            background: white;
-            border-radius: 5px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-        h1 {
-            text-align: center;
-            color: #333;
-        }
-        label {
-            display: block;
-            margin-top: 10px;
-            color: #555;
-        }
-        input[type="password"], input[type="submit"] {
-            width: 100%;
-            padding: 10px;
-            margin-top: 5px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
-        input[type="submit"] {
-            background-color: #007BFF;
-            color: white;
-            cursor: pointer;
-            border: none;
-        }
-        input[type="submit"]:hover {
-            background-color: #0056b3;
-        }
-    </style>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- SweetAlert2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
 </head>
-<body>
-    <div class="container">
-        <h1>Change Password</h1>
-        <form method="POST">
-            <label for="new_password">New Password:</label>
-            <input type="password" id="new_password" name="new_password" required>
-
-            <label for="confirm_password">Confirm Password:</label>
-            <input type="password" id="confirm_password" name="confirm_password" required>
-
-            <input type="submit" value="Change Password">
-        </form>
+<body class="bg-light">
+    <div class="container d-flex justify-content-center align-items-center vh-100">
+        <div class="card shadow-sm w-100" style="max-width: 400px;">
+            <div class="card-body">
+                <h1 class="text-center text-primary">Change Password</h1>
+                <form method="POST" class="mt-4">
+                    <div class="mb-3">
+                        <label for="new_password" class="form-label">New Password:</label>
+                        <input type="password" id="new_password" name="new_password" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="confirm_password" class="form-label">Confirm Password:</label>
+                        <input type="password" id="confirm_password" name="confirm_password" class="form-control" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Change Password</button>
+                </form>
+            </div>
+        </div>
     </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- SweetAlert2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- SweetAlert Script -->
+    <?php if (!empty($alertScript)) echo $alertScript; ?>
 </body>
 </html>
+
+

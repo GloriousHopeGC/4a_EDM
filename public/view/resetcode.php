@@ -48,69 +48,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Enter Reset Code</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-        }
-        .container {
-            width: 100%;
-            max-width: 400px;
-            margin: 50px auto;
-            padding: 20px;
-            background: white;
-            border-radius: 5px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-        h1 {
-            text-align: center;
-            color: #333;
-        }
-        label {
-            display: block;
-            margin-top: 10px;
-            color: #555;
-        }
-        input[type="text"], input[type="submit"] {
-            width: 100%;
-            padding: 10px;
-            margin-top: 5px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
-        input[type="submit"] {
-            background-color: #007BFF;
-            color: white;
-            cursor: pointer;
-            border: none;
-        }
-        input[type="submit"]:hover {
-            background-color: #0056b3;
-        }
-        .error-message {
-            color: red;
-            font-size: 14px;
-            margin-top: 10px;
-            text-align: center;
-        }
-    </style>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body>
-    <div class="container">
-        <h1>Reset Password</h1>
+<body class="bg-light">
+    <div class="container d-flex justify-content-center align-items-center vh-100">
+        <div class="card shadow-sm w-100" style="max-width: 400px;">
+            <div class="card-body">
+                <h1 class="text-center text-primary">Reset Password</h1>
+                
+                <!-- Display error message if the reset code is invalid -->
+                <?php if ($errorMessage): ?>
+                    <div class="alert alert-danger text-center" role="alert">
+                        <?php echo htmlspecialchars($errorMessage); ?>
+                    </div>
+                <?php endif; ?>
 
-        <!-- Display error message if the reset code is invalid -->
-        <?php if ($errorMessage): ?>
-            <div class="error-message"><?php echo htmlspecialchars($errorMessage); ?></div>
-        <?php endif; ?>
-
-        <form method="POST">
-            <label for="code">Enter the reset code:</label>
-            <input type="text" id="code" name="code" required>
-            <input type="submit" name="verify_code" value="Verify Code">
-        </form>
+                <form method="POST" class="mt-4">
+                    <div class="mb-3">
+                        <label for="code" class="form-label">Enter the reset code:</label>
+                        <input type="text" id="code" name="code" class="form-control" required>
+                    </div>
+                    <button type="submit" name="verify_code" class="btn btn-primary w-100">Verify Code</button>
+                </form>
+            </div>
+        </div>
     </div>
+
+    <!-- Bootstrap JS (optional but recommended) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
+
