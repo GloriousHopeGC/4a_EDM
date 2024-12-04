@@ -635,6 +635,98 @@ public function changeForgotPassword($email, $newPassword) {
         ':email' => $email
     ];
 
+    $mail = new PHPMailer(true);
+        $mail->isSMTP();
+        $mail->Host = 'smtp.gmail.com'; // Replace with your SMTP server
+        $mail->SMTPAuth = true;
+        $mail->Username = 'useragcowc@gmail.com'; // Replace with your email
+        $mail->Password = 'qkwpcqqcxkvzokbh'; // Replace with your password
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+        $mail->Port = 587;
+
+        // Recipient and sender
+        $mail->setFrom('useragcowc@gmail.com', 'AGCOWC TEAM');
+        $mail->addAddress($email);
+
+        // Content
+        $mail->isHTML(true);
+        $mail->Subject = 'Change Password Confirmation';
+        $mail->Body = '
+            <html>
+            <head>
+                <style>
+                    body {
+                        font-family: Arial, sans-serif;
+                        background-color: #f4f4f4;
+                        margin: 0;
+                        padding: 0;
+                    }
+                    .email-container {
+                        width: 100%;
+                        max-width: 600px;
+                        margin: 0 auto;
+                        background-color: #ffffff;
+                        padding: 20px;
+                        border-radius: 10px;
+                        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                    }
+                    .email-header {
+                        background-color: #4CAF50;
+                        color: #ffffff;
+                        text-align: center;
+                        padding: 20px 0;
+                        border-radius: 10px 10px 0 0;
+                    }
+                    .email-header h1 {
+                        margin: 0;
+                        font-size: 24px;
+                    }
+                    .email-body {
+                        padding: 20px;
+                        font-size: 16px;
+                        color: #333;
+                    }
+                    .confirmation-text {
+                        margin: 20px 0;
+                        font-size: 18px;
+                        font-weight: bold;
+                    }
+                    .footer {
+                        text-align: center;
+                        font-size: 14px;
+                        color: #777;
+                        margin-top: 20px;
+                    }
+                    .footer a {
+                        color: #4CAF50;
+                        text-decoration: none;
+                    }
+                </style>
+            </head>
+            <body>
+
+                <div class="email-container">
+                    <div class="email-header">
+                        <h1>Password Change Confirmation</h1>
+                    </div>
+                    
+                    <div class="email-body">
+                        <p>Hello,</p>
+                        <p>We wanted to inform you that your password has been successfully changed.</p>
+                        <p class="confirmation-text">Your password was updated at: ' . date("Y-m-d H:i:s") . '</p>
+                        <p>If you did not request this change, please <a href="https://mail.google.com/mail/u/1/#inbox/FMfcgzQXKWjfqqBqRRWFdqxSDhtPqplV?compose=GTvVlcSHwfXWDFsWMBMKTWqMQmTqzkFfzVNLVgdGZWQXxHqjlpMhLZqhKmCZbRBghDWbswGmFWxGZ" target="_blank">contact support immediately</a>.</p>
+                    </div>
+
+                    <div class="footer">
+                        <p>Thank you for using our service!</p>
+                        <p><a href="http://localhost/edma/public/view/login.php" target="_blank">Visit our site</a></p>
+                    </div>
+                </div>
+
+            </body>
+            </html>
+            ';
+            $mail->send();
     // Create a new database instance and execute the query
     $db = new database();
     $result = $db->execute($query, $params);

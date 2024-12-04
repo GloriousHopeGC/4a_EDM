@@ -184,7 +184,7 @@ $(document).ready(function() {
                                       <tr data-user-id="${row.u_id}" class="user-row">
                                         <td>
                                             <div class="d-flex align-items-center user-name" data-user-id="${row.id}" style="cursor:pointer;">  <!-- use u_id here -->
-                                                <img src="../lib/images/user_profile/${row.image_name}" alt="${row.name}" class="rounded-circle" style="width: 50px; height: 50px; margin-right: 10px; cursor:pointer;">
+                                                <img src="../lib/images/user_profile/${row.image_name}" alt="${row.name}" class="rounded-circle" style="width: 50px; height: 50px; margin-right: 10px; margin-top:20px; cursor:pointer;">
                                                 <span style="color: #333;">${row.name}</span>
                                             </div>
                                         </td>

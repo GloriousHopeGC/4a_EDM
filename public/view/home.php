@@ -5,7 +5,6 @@ $controller->sessionhome();
 $controller->handleLogoutAction(); 
 $currentUserId = $_SESSION['user_id'] ?? null;
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
