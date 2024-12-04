@@ -105,61 +105,50 @@ $(document).ready(function() {
             } else {
                 $('#userData').html(`
                 <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <div class="container">
-        <a class="navbar-brand" href="update_user.php">${response.user_info.name}</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ms-auto"> <!-- Right-aligned items -->
-                <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="home.php">Home</a>
-                </li>
-                <li class="nav-item d-block d-lg-none">
-                    <a class="nav-link" href="update_user.php">Profile</a>
-                </li>
-                <li class="nav-item d-block d-lg-none">
-                    <a class="nav-link" href="#" onclick="confirmLogout()">Logout</a>
-                </li>
-                <!-- Dropdown Menu -->
-                <li class="nav-item dropdown d-none d-lg-block">
-                    <a
-                        class="nav-link dropdown-toggle"
-                        href="#"
-                        id="navbarDropdown"
-                        role="button"
-                        data-bs-toggle="dropdown"
-                        aria-expanded="false">
-                        <img
-                            src="../lib/images/user_profile/${response.user_info.image_name}"
-                            alt="Profile"
-                            class="rounded-circle"
-                            style="width: 30px; height: 30px;" />
-                    </a>
-                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <li>
-                            <a class="dropdown-item" href="update_user.php">
-                                <i class="bi-person-circle"></i> Profile
-                            </a>
-                        </li>
-                        <li>
-                            <a class="dropdown-item" href="#" onclick="confirmLogout()">
-                                <i class="bi bi-door-open"></i> Log-out
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-            </ul>
-        </div>
-    </div>
-</nav>
+                    <div class="container">
+                        <a class="navbar-brand" href="update_user.php">${response.user_info.name}</a>
+                            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                                <span class="navbar-toggler-icon"></span>
+                            </button>
+                                <div class="collapse navbar-collapse" id="navbarNav">
+                                    <ul class="navbar-nav ms-auto"> <!-- Right-aligned items -->
+                                        <li class="nav-item">
+                                            <a class="nav-link active" aria-current="page" href="home.php">Home</a>
+                                        </li>
+                                            <li class="nav-item d-block d-lg-none">
+                                                <a class="nav-link" href="update_user.php">Profile</a>
+                                            </li>
+                                            <li class="nav-item d-block d-lg-none">
+                                                <a class="nav-link" href="#" onclick="confirmLogout()">Logout</a>
+                                            </li>
+                                            <li class="nav-item dropdown d-none d-lg-block">
+                                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                    <img src="../lib/images/user_profile/${response.user_info.image_name}" alt="Profile" class="rounded-circle" style="width: 30px; height: 30px;" />
+                                                </a>
+                                                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                            <li>
+                                                <a class="dropdown-item" href="update_user.php">
+                                                    <i class="bi-person-circle"></i> Profile
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item" href="#" onclick="confirmLogout()">
+                                                    <i class="bi bi-door-open"></i> Log-out
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                        </div>
+                    </div>
+                </nav>
 
                 `);
                 $('#searchBar').html(`
                     <div class="d-flex justify-content-center mt-3">
                         <form class="d-flex" id="searchForm" method="GET" style="max-width: 542px; width: 100%;">
-                            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name="query" style="min-width: 280px; width: 100%;"/>
-                            <button class="btn btn-outline-success" type="submit">Search</button>
+                            <input class="form-control me-2" type="search" placeholder="Search User" aria-label="Search" name="query" style="min-width: 280px; width: 100%;"/>
+                             <!-- <button class="btn btn-outline-success" type="submit">Search</button> -->
                         </form>
                     </div>
 
@@ -183,20 +172,19 @@ $(document).ready(function() {
                     $('#userInfo').hide();  
                 
                     $.ajax({
-                        url: '/edma/src/controller/searchdata.php',  // Make sure this file is processing the search correctly
+                        url: '/edma/src/controller/searchdata.php',  // Ensure this file returns JSON correctly
                         type: 'GET',
                         dataType: 'json',
                         data: { query: query },
                         success: function(response) {
-                            var resultsHtml = '';
+                            let resultsHtml = '';
                             if (response.data && response.data.length > 0) {
-                                resultsHtml = '<table class="table table-striped"><thead><tr><th></th><th></th></tr></thead><tbody>';
                                 response.data.forEach(function(row) {
                                     resultsHtml += `
-                                      <tr>
+                                      <tr data-user-id="${row.u_id}" class="user-row">
                                         <td>
-                                            <div class="d-flex align-items-center">
-                                                <img src="../lib/images/user_profile/${row.image_name}" alt="${row.name}" class="rounded-circle" style="width: 50px; height: 50px; margin-right: 10px;">
+                                            <div class="d-flex align-items-center user-name" data-user-id="${row.id}" style="cursor:pointer;">  <!-- use u_id here -->
+                                                <img src="../lib/images/user_profile/${row.image_name}" alt="${row.name}" class="rounded-circle" style="width: 50px; height: 50px; margin-right: 10px; cursor:pointer;">
                                                 <span style="color: #333;">${row.name}</span>
                                             </div>
                                         </td>
@@ -212,6 +200,18 @@ $(document).ready(function() {
                         error: function(xhr, status, error) {
                             console.error("AJAX Error: ", status, error);
                             $('#searchResults').html('<div class="alert alert-danger">There was an error with the search request.</div>');
+                        }
+                    });
+                    $(document).on('click', '.user-row', function() {
+                        const userId = $(this).data('user-id'); // Extract user ID from the clicked row
+                        const currentUserId = $('meta[name="current-user-id"]').attr('content'); // Current user's ID from a meta tag
+                        
+                        if (userId === parseInt(currentUserId)) {
+                            // Redirect to update_user.php if the IDs match
+                            window.location.href = '../view/update_user.php';
+                        } else {
+                            // Otherwise, redirect to the profile page
+                            window.location.href = `../view/update_profile.php?id=${userId}`;
                         }
                     });
                 });
@@ -562,7 +562,7 @@ $(document).ready(function() {
                                                                             <i class="bi bi-three-dots mr-3" style="font-size: 20px;" data-bs-toggle="dropdown" aria-expanded="false"></i>
                                                                             <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                                                                                 <li><a class="dropdown-item edit-post" href="#" data-post-id="${post.post_id}" data-post-content="${post.content}" data-post-file="${post.file_name}">Edit</a></li>
-                                                                                <li><a class="dropdown-item delete-post" href="#" data-post-id="${post.post_id}">Delete</a></li>
+                                                                                <li><a class="dropdown-item delete-profile-post" href="#" data-post-id="${post.post_id}">Delete</a></li>
                                                                             </ul>
                                                                         </div>
                                                                     ` : ''}
@@ -592,9 +592,79 @@ $(document).ready(function() {
                         // Helper function to format date
                         function formatDateTo12Hour(dateString) {
                             const date = new Date(dateString);
-                            const options = { hour: '2-digit', minute: '2-digit', hour12: true };
-                            return date.toLocaleDateString('en-US', options);
+                            const options = { 
+                                year: 'numeric', 
+                                month: 'long', 
+                                day: 'numeric', 
+                                hour: 'numeric', 
+                                minute: '2-digit',  
+                                hour12: true 
+                            };
+                            return date.toLocaleString('en-US', options);
                         }
+                        
+                        function deleteProfilePost(postId) {
+                            console.log("Deleting post with ID:", postId); // Log the ID before making the AJAX call
+                            // Confirm deletion using SweetAlert
+                            Swal.fire({
+                                title: 'Are you sure?',
+                                text: 'Do you really want to delete this post? This action cannot be undone.',
+                                icon: 'warning',
+                                showCancelButton: true,
+                                confirmButtonText: 'Yes, delete it!',
+                                cancelButtonText: 'Cancel',
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    // Proceed with deletion if confirmed
+                                    $.ajax({
+                                        url: '/edma/src/controller/delete_post.php',
+                                        type: 'POST',
+                                        data: { id: postId },
+                                        dataType: 'json', // Ensures the response is parsed as JSON
+                                        success: function(response) {
+                                            console.log("Response from server:", response); // Debug response
+                        
+                                            if (response.status === 'success') {
+                                                Swal.fire({
+                                                    title: 'Deleted!',
+                                                    text: 'Post deleted successfully!',
+                                                    icon: 'success',
+                                                    confirmButtonText: 'OK',
+                                                });
+                        
+                                                loadAdminPosts(); // Refresh the posts list after deletion
+                                            } else {
+                                                const errorMessage = response.message || 'Unknown error';
+                                                Swal.fire({
+                                                    title: 'Error',
+                                                    text: 'Error deleting post: ' + errorMessage,
+                                                    icon: 'error',
+                                                    confirmButtonText: 'OK',
+                                                });
+                                            }
+                                        },
+                                        error: function(jqXHR, textStatus, errorThrown) {
+                                            console.error("AJAX error while deleting post: ", textStatus, errorThrown);
+                                            Swal.fire({
+                                                title: 'Error',
+                                                text: 'AJAX error: ' + textStatus,
+                                                icon: 'error',
+                                                confirmButtonText: 'OK',
+                                            });
+                                        },
+                                    });
+                                }
+                            });
+                        }
+                        
+                        // Use event delegation to handle clicks for dynamic elements
+                        $(document).on('click', '.delete-profile-post', function(e) {
+                            e.preventDefault(); // Prevent default anchor behavior
+                            const postId = $(this).data('post-id'); // Retrieve post ID
+                            deleteProfilePost(postId);
+                        });
+
+                        loadAdminPosts(); 
                     });
                     
 
@@ -656,7 +726,7 @@ $(document).ready(function() {
                         
                           
                         $('#adminPostlist').html(`
-                           <div id="postsContainer" class="mt-5">
+                           <div id="postsContainer" class="mt-4">
                                 <div id="postsList"></div>
                             </div>
                         `);
@@ -720,7 +790,7 @@ $(document).ready(function() {
                         
                                                             <!-- Media Display -->
                                                             ${post.file_name && post.file_type.startsWith('image/') ? 
-                                                                `<img src="../../public/lib/images/posts/${post.file_name}" alt="${post.title}" class="img-fluid rounded mb-3 full-width-media" style="max-width: 100%; height: auto;">`
+                                                                `<img src="../../public/lib/images/posts/${post.file_name}" alt="${post.title}" class="img-fluid rounded mb-2 full-width-media" style="width: 550px; height: 550px; object-fit: cover; border-radius: 8px;">`
                                                             : post.file_type === 'video/mp4' ? 
                                                                 `<video controls class="w-100 rounded mb-3 full-width-media">
                                                                     <source src="../../public/lib/images/posts/${post.file_name}" type="video/mp4">
@@ -1009,7 +1079,7 @@ $(document).ready(function() {
                                             text: response.message,
                                             icon: response.icon
                                         }).then(() => {
-                                            window.location.href = 'admin.php'; // Redirect to admin dashboard after success
+                                            window.location.href = 'home.php'; // Redirect to admin dashboard after success
                                         });
                                     } else {
                                         Swal.fire({

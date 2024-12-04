@@ -66,14 +66,42 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- SweetAlert2 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f8f9fa;
+        }
+        .card {
+            margin: 20px;
+            border-radius: 10px;
+        }
+        .card-body h2 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #333;
+        }
+        .card-body p {
+            font-size: 0.95rem;
+            color: #6c757d;
+        }
+        .btn-primary {
+            font-weight: 500;
+        }
+        a {
+            font-size: 0.9rem;
+        }
+    </style>
 </head>
 
 <body>
-    <div class="container mt-5">
-        <div class="card shadow-sm mx-auto" style="max-width: 400px;">
+    <div class="d-flex justify-content-center align-items-center vh-100">
+        <div class="card shadow-sm" style="width: 360px;">
             <div class="card-body">
-                <h1 class="text-center text-primary">Forgot Password?</h1>
-                <p class="text-center text-muted">Enter your email to receive a password reset code.</p>
+                <h2 class="text-center mb-3">Forgot Password?</h2>
+                <p class="text-center mb-4">Enter your email to receive a password reset code.</p>
 
                 <form method="POST">
                     <div class="mb-3">
@@ -82,6 +110,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </div>
                     <button type="submit" name="send_code" class="btn btn-primary w-100">Send Reset Code</button>
                 </form>
+                <div class="text-center mt-3">
+                    <a href="login.php" class="text-decoration-none">Remembered your password? <strong>Login here</strong></a>
+                </div>
             </div>
         </div>
     </div>

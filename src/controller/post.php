@@ -101,7 +101,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt = $pdo->prepare($query);
         $stmt->execute($params);
 
-        echo json_encode(['status' => 'success', 'message' => 'Post created successfully.']);
+        echo json_encode(['status' => 'success', 'icon' => 'success', 'message' => 'Post created successfully.']);
     } catch (PDOException $e) {
         echo json_encode(['status' => 'error', 'message' => 'Database error: ' . $e->getMessage()]);
     }

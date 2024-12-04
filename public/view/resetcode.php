@@ -55,7 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="container d-flex justify-content-center align-items-center vh-100">
         <div class="card shadow-sm w-100" style="max-width: 400px;">
             <div class="card-body">
-                <h1 class="text-center text-primary">Reset Password</h1>
+                <h1 class="text-center text-primary">Verification Code</h1>
                 
                 <!-- Display error message if the reset code is invalid -->
                 <?php if ($errorMessage): ?>

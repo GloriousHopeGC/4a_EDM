@@ -37,9 +37,12 @@ class userController
             // Determine the default image path based on gender
             $default_image_path = 'default.png'; // Default fallback
             if (strtolower($gender) === 'male') {
-                $default_image_path = 'male.jpg';
+                $default_image_path = 'male.png';
             } elseif (strtolower($gender) === 'female') {
-                $default_image_path = 'female.jpg';
+                $default_image_path = 'female.png';
+            }
+            elseif (strtolower($gender) === 'unknown') {
+                $default_image_path = 'unknown.png';
             }
             
             // Prepare to insert into user_info table
@@ -601,7 +604,7 @@ public function verifyResetCode($email, $resetCode) {
             // Handle case where code is invalid or expired
             return [
                 'status' => 'error', 
-                'message' => 'Invalid or expired reset code. Please request a new one.'
+                'message' => 'Invalid Reset Code, Try Again.'
             ];
         }
     } catch (PDOException $e) {
