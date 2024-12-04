@@ -104,7 +104,7 @@ $(document).ready(function() {
                 $('#userData').html('<div class="alert alert-danger">' + response.error + '</div>');
             } else {
                 $('#userData').html(`
-                <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
                     <div class="container">
                         <a class="navbar-brand" href="update_user.php">${response.user_info.name}</a>
                             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -145,7 +145,7 @@ $(document).ready(function() {
 
                 `);
                 $('#searchBar').html(`
-                    <div class="d-flex justify-content-center mt-3">
+                    <div class="d-flex justify-content-center" style="margin-top:80px;">
                         <form class="d-flex" id="searchForm" method="GET" style="max-width: 542px; width: 100%;">
                             <input class="form-control me-2" type="search" placeholder="Search User" aria-label="Search" name="query" style="min-width: 280px; width: 100%;"/>
                              <!-- <button class="btn btn-outline-success" type="submit">Search</button> -->
@@ -219,7 +219,7 @@ $(document).ready(function() {
                 
                 
                 $('#userInfo').html(`
-                   <div class="container mt-5">
+                   <div class="container" style="margin-top:80px;">
                         <div class="row">
                             <!-- Left Column for User Info Card -->
                                 <div class="col-md-6 col-lg-4">

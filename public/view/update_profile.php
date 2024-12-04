@@ -44,7 +44,7 @@ $age = $today->diff($birthdate)->y;
 <body>
 <nav id="userData" data-user-name="<?php echo $userName; ?>" data-user-gender="<?php echo $userGender; ?>" data-user-birthday="<?php echo $userBirthday; ?>" data-user-age="<?php echo $age; ?>"></nav>
 
-<div class="container mt-5">
+<div class="container" style="margin-top:80px;">
     <div class="row">
         <div class="col-md-6 col-lg-4">
             <div class="card">
