@@ -18,7 +18,9 @@ if (isset($_GET['name'])) {
 
     try {
         // Query to search user by name
-        $stmt = $pdo->prepare("SELECT * FROM user_info WHERE name LIKE :name");
+        $stmt = $pdo->prepare("SELECT ui.* FROM user_info ui
+            JOIN user u ON ui.user_id = u.id
+            WHERE u.flag = 1 AND ui.name LIKE :query");
         $stmt->bindParam(':name', $name, PDO::PARAM_STR);
         $stmt->execute();
 

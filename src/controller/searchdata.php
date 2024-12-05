@@ -16,8 +16,11 @@ try {
 if (isset($_GET['query'])) {
     $query = $_GET['query'];
 
-    // Search query using LIKE for the 'name' column
-    $sql = "SELECT * FROM user_info WHERE name LIKE :query";
+    // Search query using LIKE for the 'name' column with a JOIN on the 'user' table to check the 'flag' value
+    $sql = "SELECT ui.* FROM user_info ui
+            INNER JOIN user u ON ui.u_id = u.id  -- Make sure this join condition is correct
+            WHERE u.flag = 1 AND ui.name LIKE :query";
+    
     $stmt = $pdo->prepare($sql);
     $stmt->bindValue(':query', '%' . $query . '%', PDO::PARAM_STR);
     $stmt->execute();

@@ -526,7 +526,7 @@ $(document).ready(function() {
                                                                         <h6 class="card-title text-truncate">${post.admin_name || 'Unknown'}</h5>
                                                                     </div>
                             
-                                                                   <p class="card-text text-truncate">${post.content}</p>
+                                                                   <p class="card-text text-truncate" style=" cursor:pointer;" data-post-id="${post.post_id}" data-ui-id="${post.ui_id}">${post.content}</p>
                                                             <small class="text-muted d-block mb-3">Posted on ${formattedDate}</small>
                         
                                                             <!-- Media Display -->
@@ -772,50 +772,43 @@ $(document).ready(function() {
                                                 const posts = response.posts;
                                                 let postsHtml = '';
                                                 const currentUserId = $('meta[name="current-user-id"]').attr('content');
-                            
+                                    
                                                 if (posts.length > 0) {
                                                     posts.forEach(post => {
                                                         const formattedDate = formatDateTo12Hour(post.created_at);
-                            
+                                    
                                                         postsHtml += `
-                                                            <div class="card mb-3" style="max-width: 540px; margin: auto;">
+                                                            <div class="card mb-3 post-card" style="max-width: 540px; margin: auto;">
                                                                 <div class="card-body">
                                                                     <div class="d-flex align-items-center mb-3">
                                                                         <img src="../../public/lib/images/user_profile/${post.image_name}" alt="${post.admin_name}" class="img-fluid rounded-circle" style="width: 40px; height: 40px; margin-right: 10px;">
-                                                                      <h6 class="card-title text-truncate user-name" data-user-id="${post.u_id}" style="cursor: pointer;">${post.admin_name || 'Unknown'}</h6>
+                                                                        <h6 class="card-title text-truncate user-name" data-user-id="${post.u_id}" style="cursor: pointer;">${post.admin_name || 'Unknown'}</h6>
                                                                     </div>
-                            
-                                                                   <p class="card-text text-truncate">${post.content}</p>
-                                                            <small class="text-muted d-block mb-3">Posted on ${formattedDate}</small>
-                        
-                                                            <!-- Media Display -->
-                                                            ${post.file_name && post.file_type.startsWith('image/') ? 
-                                                                `<img src="../../public/lib/images/posts/${post.file_name}" alt="${post.title}" class="img-fluid rounded mb-2 full-width-media" style="width: 550px; height: 550px; object-fit: cover; border-radius: 8px;">`
-                                                            : post.file_type === 'video/mp4' ? 
-                                                                `<video controls class="w-100 rounded mb-3 full-width-media">
-                                                                    <source src="../../public/lib/images/posts/${post.file_name}" type="video/mp4">
-                                                                    Your browser does not support the video tag.
-                                                                </video>`
-                                                            : post.file_type === 'audio/mpeg' || post.file_type === 'audio/wav' ? 
-                                                                `<audio controls class="w-100 rounded mb-3 full-width-media">
-                                                                    <source src="../../public/lib/images/posts/${post.file_name}" type="${post.file_type}">
-                                                                    Your browser does not support the audio element.
-                                                                </audio>`
-                                                                : post.file_name && 
-                                                                (post.file_type === 'application/pdf' || 
-                                                                post.file_type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' || 
-                                                                post.file_type === 'application/vnd.openxmlformats-officedocument.presentationml.presentation') ?
-                                                                // Check file type and display its name instead of "Download File"
-                                                                `<a href="../../public/lib/images/posts/${post.file_name}"target="_blank" class="btn btn-link">${post.file_name.replace(/^\d+_/, '')}</a>`
-                                                            : post.file_name ? 
-                                                                `<p class="mb-0">
-                                                                    <a href="../../public/lib/images/posts/${post.file_name}" target="_blank" class="btn btn-link">Download File</a>
-                                                                </p>`
-                                                            : ''}
-                            
-                                                                    <input type="hidden" name="user_id" value="${post.u_id}">
-                            
-                                                                    <!-- Dropdown for delete and edit actions -->
+                                                                    <p class="card-text text-truncate" style=" cursor:pointer;" data-post-id="${post.post_id}" data-ui-id="${post.ui_id}">${post.content}</p>
+                                                                    <small class="text-muted d-block mb-3">Posted on ${formattedDate}</small>
+                                    
+                                                                    ${post.file_name && post.file_type.startsWith('image/') ? 
+                                                                        `<img src="../../public/lib/images/posts/${post.file_name}" alt="${post.title}" class="img-fluid rounded mb-2 full-width-media" style="width: 550px; height: 550px; object-fit: cover; border-radius: 8px;">`
+                                                                    : post.file_type === 'video/mp4' ? 
+                                                                        `<video controls class="w-100 rounded mb-3 full-width-media">
+                                                                            <source src="../../public/lib/images/posts/${post.file_name}" type="video/mp4">
+                                                                            Your browser does not support the video tag.
+                                                                        </video>`
+                                                                    : post.file_type === 'audio/mpeg' || post.file_type === 'audio/wav' ? 
+                                                                        `<audio controls class="w-100 rounded mb-3 full-width-media">
+                                                                            <source src="../../public/lib/images/posts/${post.file_name}" type="${post.file_type}">
+                                                                            Your browser does not support the audio element.
+                                                                        </audio>`
+                                                                        : post.file_name && 
+                                                                        (post.file_type === 'application/pdf' || 
+                                                                        post.file_type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' || 
+                                                                        post.file_type === 'application/vnd.openxmlformats-officedocument.presentationml.presentation') ?
+                                                                        `<a href="../../public/lib/images/posts/${post.file_name}"target="_blank" class="btn btn-link">${post.file_name.replace(/^\d+_/, '')}</a>`
+                                                                    : post.file_name ? 
+                                                                        `<p class="mb-0">
+                                                                            <a href="../../public/lib/images/posts/${post.file_name}" target="_blank" class="btn btn-link">Download File</a>
+                                                                        </p>`
+                                                                    : ''}
                                                                     ${post.u_id == currentUserId ? `
                                                                         <div class="dropdown position-absolute top-0 end-0 p-2">
                                                                             <i class="bi bi-three-dots mr-3" style="font-size: 20px;" data-bs-toggle="dropdown" aria-expanded="false"></i>
@@ -832,8 +825,15 @@ $(document).ready(function() {
                                                 } else {
                                                     postsHtml = '<p>No posts available.</p>';
                                                 }
-                            
+                                    
                                                 $('#postsList').html(postsHtml);
+                                    
+                                                // Attach click event to redirect to view_post.php with the post ID
+                                                $('.card-text').on('click', function() {
+                                                    const postId = $(this).data('post-id');
+                                                    const userId = $(this).data('ui-id');  // Get user ID
+                                                    window.location.href = `view_post.php?post_id=${postId}&user_info_id=${userId}`;  // Pass both IDs in the URL
+                                                });
                                             } else {
                                                 console.error('Error fetching posts:', response.message);
                                             }
@@ -841,9 +841,80 @@ $(document).ready(function() {
                                         error: function(jqXHR, textStatus, errorThrown) {
                                             console.error("AJAX error: ", textStatus, errorThrown);
                                         }
-                                    });
+                                    });                                    
                                 }
-                            
+                                
+                                $(document).ready(function () {
+                                    // Get the `post_id` from the URL
+                                    const urlParams = new URLSearchParams(window.location.search);
+                                    const postId = urlParams.get('post_id');
+                                    const userId = urlParams.get('user_info_id');
+                                
+                                    if (!postId) {
+                                        $('#postContainer').html('<p class="text-danger">Invalid Post ID.</p>');
+                                        return;
+                                    }
+                                
+                                    // Fetch post data using AJAX
+                                    $.ajax({
+                                        url: '/edma/src/controller/fetch_single_post.php',
+                                        type: 'GET',
+                                        data: { post_id: postId, user_info_id: userId },
+                                        dataType: 'json',
+                                        success: function (response) {
+                                            if (response.status === 'success') {
+                                                const post = response.post;
+                                                
+                                                $('#viewPost').html(`
+                                                    <div class="card">
+                                                        <div class="card-body">
+                                                            <div class="d-flex align-items-center mb-3">
+                                                                <img src="../../public/lib/images/user_profile/${post.user_image || 'default.jpg'}" class="img-fluid rounded-circle" style="width: 40px; height: 40px; margin-right: 10px;"/>
+                                                                <h5 class="card-title">${post.user_name || 'Untitled'}</h5>
+                                                            </div>
+                                                            <p class="card-text"  style=" cursor:pointer;" data-post-id="${post.post_id}" data-ui-id="${post.ui_id}">${post.content || 'No content available.'}</p>
+                                                            <small class="text-muted">Posted on: ${new Date(post.created_at).toLocaleString()}</small>
+                                                            <div id="postMedia" class="mt-3"></div>
+                                                        </div>
+                                                    </div>
+                                                `);
+                                                
+                                            
+                                                // Display post media
+                                                if (post.file_name && post.file_type.startsWith('image/')) {
+                                                    $('#postMedia').html(
+                                                        `<img src="../../public/lib/images/posts/${post.file_name}" alt="${post.title}"  class="img-fluid rounded mb-2 full-width-media" style="width: 550px; height: 550px; object-fit: cover; border-radius: 8px;">`
+                                                    );
+                                                } else if (post.file_type === 'video/mp4') {
+                                                    $('#postMedia').html(
+                                                        `<video controls class="w-100">
+                                                            <source src="../../public/lib/images/posts/${post.file_name}" type="video/mp4">
+                                                            Your browser does not support the video tag.
+                                                        </video>`
+                                                    );
+                                                } else if (post.file_type === 'audio/mpeg' || post.file_type === 'audio/wav') {
+                                                    $('#postMedia').html(
+                                                        `<audio controls class="w-100">
+                                                            <source src="../../public/lib/images/posts/${post.file_name}" type="${post.file_type}">
+                                                            Your browser does not support the audio element.
+                                                        </audio>`
+                                                    );
+                                                } else if (post.file_name) {
+                                                    $('#postMedia').html(
+                                                        `<a href="../../public/lib/images/posts/${post.file_name}" target="_blank" class="btn btn-link">Download File</a>`
+                                                    );
+                                                }
+                                            } else {
+                                                $('#postContainer').html(`<p class="text-danger">${response.message}</p>`);
+                                            }
+                                        },
+                                        error: function (jqXHR, textStatus, errorThrown) {
+                                            console.error("AJAX error: ", textStatus, errorThrown);
+                                            $('#postContainer').html('<p class="text-danger">Failed to load post.</p>');
+                                        }
+                                    });
+                                });
+                                
                                 // Function to format date to 12-hour format
                                 function formatDateTo12Hour(dateString) {
                                     const date = new Date(dateString);

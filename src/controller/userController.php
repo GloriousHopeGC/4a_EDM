@@ -737,6 +737,37 @@ public function changeForgotPassword($email, $newPassword) {
         return ['status' => 'error', 'message' => 'Failed to update password.'];
     }
 }
+public function fetch_post_by_id($post_id) {
+    // Initialize the database connection
+    $db = new database();
+    $con = $db->initDatabase();
+
+    try {
+        // Prepare a statement to fetch the post with an INNER JOIN
+        $stmt = $con->prepare("
+            SELECT 
+                posts.*, 
+                user_info.name AS user_name, 
+                user_info.image_name AS user_image
+            FROM posts 
+            INNER JOIN user_info ON posts.ui_id = user_info.id 
+            WHERE posts.post_id = :post_id
+        ");
+        $stmt->bindParam(':post_id', $post_id, PDO::PARAM_INT);
+        $stmt->execute();
+        $post = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($post) {
+            return ['status' => 'success', 'post' => $post];
+        } else {
+            return ['status' => 'error', 'message' => 'Post not found.'];
+        }
+    } catch (Exception $e) {
+        // Handle errors
+        return ['status' => 'error', 'message' => 'Failed to fetch post: ' . $e->getMessage()];
+    }
+}
+
 
 
 

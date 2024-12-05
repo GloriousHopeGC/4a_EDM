@@ -96,7 +96,7 @@ $(document).ready(function () {
                                             ${post.name || 'Unknown'}
                                         </h6>
                                     </div>
-                                    <p class="card-text text-truncate">${post.content}</p>
+                                    <p class="card-text text-truncate" style=" cursor:pointer;" data-post-id="${post.post_id}" data-ui-id="${post.ui_id}">${post.content}</p>
                                     <small class="text-muted d-block mb-3">Posted on ${formattedDate}</small>
                                     ${fileDisplay} <!-- Insert file display here -->
                                 </div>
