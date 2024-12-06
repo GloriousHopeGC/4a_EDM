@@ -78,8 +78,8 @@ $(document).ready(function () {
                             else if (['pdf', 'docx', 'pptx'].includes(fileExtension)) {
                                 fileDisplay = `  
                                     <div class="document-file">
-                                        <a href="../../public/lib/images/posts/${post.file_name}" target="_blank" class="btn btn-link">
-                                            <strong>${post.file_name.replace(/^\d+_/, '')}</strong>
+                                       <a href="../../public/lib/images/posts/${post.file_name}" target="_blank" class="btn btn-link" style="text-decoration: none;">
+                                            <i class="fas fa-download"></i> ${post.file_name.replace(/^\d+_/, '')}
                                         </a>
                                     </div>
                                 `;

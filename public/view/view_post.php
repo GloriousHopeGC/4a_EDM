@@ -1,3 +1,10 @@
+<?php
+require_once '../../src/controller/userController.php';
+$controller = new userController();
+$controller->sessionhome(); 
+$controller->handleLogoutAction(); 
+$currentUserId = $_SESSION['user_id'] ?? null;
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,6 +15,10 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="/edma/public/lib/js/my.js"></script>
+    <script src="/edma/public/lib/js/swal.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="/4a_edma/public/lib/css/sweetalert2.min.css">
+    <script defer src="/4a_edma/public/lib/js/sweetalert2.all.min.js"></script>
 </head>
 <body>
 <nav id="userData"></nav>

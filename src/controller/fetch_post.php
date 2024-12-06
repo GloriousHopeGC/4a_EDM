@@ -1,6 +1,5 @@
 <?php
 // Database connection using PDO
-// Database connection using PDO
 try {
     $dsn = 'mysql:host=localhost;dbname=4a-pro;charset=utf8mb4';
     $username = 'root'; // Replace with your database username
@@ -18,7 +17,7 @@ try {
 
 // Fetch posts with user status and flag check
 try {
-    // Adjust the query to use the 'users' table for flag check
+    // Adjust the query to include the user comments
     $stmt = $pdo->prepare("SELECT posts.*, user_info.name AS admin_name, user_info.image_name 
         FROM posts
         JOIN user_info ON posts.ui_id = user_info.id
@@ -29,6 +28,24 @@ try {
     $stmt->execute();
     $posts = $stmt->fetchAll();
 
+    // Loop through posts and fetch comments for each post
+    foreach ($posts as &$post) {
+        $postId = $post['post_id']; // Assuming 'post_id' is the primary key of the posts table
+
+        // Fetch comments for the current post
+        $commentStmt = $pdo->prepare("SELECT comment.comment, comment.created_at, user_info.name, user_info.image_name 
+FROM comment 
+JOIN user_info ON comment.ui_id = user_info.id 
+WHERE comment.p_id = ? 
+ORDER BY comment.created_at;
+ASC");
+        $commentStmt->execute([$postId]);
+        $comments = $commentStmt->fetchAll();
+
+        // Add comments to the post data
+        $post['comments'] = $comments;
+    }
+
     // Check if no posts were found
     if (empty($posts)) {
         echo json_encode(['status' => 'error', 'message' => 'No posts found.']);
@@ -38,5 +55,4 @@ try {
 } catch (PDOException $e) {
     echo json_encode(['status' => 'error', 'message' => 'Database error: ' . $e->getMessage()]);
 }
-
 ?>

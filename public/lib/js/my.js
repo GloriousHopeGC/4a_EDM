@@ -547,10 +547,13 @@ $(document).ready(function() {
                                                                 post.file_type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' || 
                                                                 post.file_type === 'application/vnd.openxmlformats-officedocument.presentationml.presentation') ?
                                                                 // Check file type and display its name instead of "Download File"
-                                                                `<a href="../../public/lib/images/posts/${post.file_name}"target="_blank" class="btn btn-link">${post.file_name.replace(/^\d+_/, '')}</a>`
+                                                                `<a href="../../public/lib/images/posts/${post.file_name}" target="_blank" class="btn btn-link" style="text-decoration: none;">
+                                                                    <i class="fas fa-download"></i> ${post.file_name.replace(/^\d+_/, '')}
+                                                                </a>`
                                                             : post.file_name ? 
                                                                 `<p class="mb-0">
-                                                                    <a href="../../public/lib/images/posts/${post.file_name}" target="_blank" class="btn btn-link">Download File</a>
+                                                                    <a href="../../public/lib/images/posts/${post.file_name}" target="_blank" class="btn btn-link" style="text-decoration: none;">
+                                                                    <i class="fas fa-download"></i> ${post.file_name.replace(/^\d+_/, '')}</a>
                                                                 </p>`
                                                             : ''}
                             
@@ -762,7 +765,54 @@ $(document).ready(function() {
                                         `;
                                         $('body').append(modalHtml); // Append modal HTML to body
                                     }
-                            
+
+                                    function openCommentSection(postId) {
+                                        const commentText = prompt("Enter your comment:");
+                                        
+                                        if (commentText) {
+                                            const currentUserId = $('meta[name="current-user-id"]').attr('content');
+                                            
+                                            $.ajax({
+                                                url: '/edma/src/controller/add_comment.php',
+                                                type: 'POST',
+                                                data: {
+                                                    post_id: postId,
+                                                    user_id: currentUserId,
+                                                    comment_text: commentText
+                                                },
+                                                dataType: 'json',
+                                                success: function(response) {
+                                                    if (response.status === 'success') {
+                                                        const commentHtml = `
+                                                            <div class="card-body d-flex">
+                                                                <img src="../../public/lib/images/user_profile/${response.comment.image_name}" alt="User" class="img-fluid rounded-circle me-3" style="width: 40px; height: 40px;">
+                                                                <div>
+                                                                    <h6 class="card-title mb-1">You</h6>
+                                                                    <small class="text-muted d-block">${response.comment.created_at}</small>
+                                                                    <p class="card-text mb-0">${response.comment.comment}</p>
+                                                                </div>
+                                                            </div>
+                                                        `;
+                                    
+                                                        // Append the comment to the appropriate post's comment list
+                                                        $(`[data-post-id="${postId}"]`)
+                                                            .closest('.post-card')
+                                                            .find('.comments-list')
+                                                            .append(commentHtml);
+                                                    } else {
+                                                        alert(response.message);
+                                                    }
+                                                },
+                                                error: function(jqXHR, textStatus, errorThrown) {
+                                                    console.error('Error adding comment:', textStatus, errorThrown);
+                                                }
+                                            });
+                                        }
+                                    }
+                                    
+                                    // Attach the function to the global window object for use in HTML onclick attributes
+                                    window.openCommentSection = openCommentSection;                                    
+                                    
                                     $.ajax({
                                         url: '/edma/src/controller/fetch_post.php',
                                         type: 'GET',
@@ -776,6 +826,25 @@ $(document).ready(function() {
                                                 if (posts.length > 0) {
                                                     posts.forEach(post => {
                                                         const formattedDate = formatDateTo12Hour(post.created_at);
+                                    
+                                                        let commentsHtml = '';
+                                                        // Loop through the comments for this post
+                                                        if (post.comments && post.comments.length > 0) {
+                                                            post.comments.forEach(comment => {
+                                                                commentsHtml += `
+                                                                    <div class="card-body d-flex">
+                                                                        <img src="../../public/lib/images/user_profile/${comment.image_name}" alt="User" class="img-fluid rounded-circle me-3" style="width: 40px; height: 40px;">
+                                                                        <div>
+                                                                            <h6 class="card-title mb-1">${comment.name || 'Anonymous'}</h6>
+                                                                            <small class="text-muted d-block">${formatDateTo12Hour(comment.created_at)}</small>
+                                                                            <p class="card-text mb-0">${comment.comment}</p>
+                                                                        </div>
+                                                                    </div>
+                                                                `;
+                                                            });
+                                                        } else {
+                                                            commentsHtml = '<p class="text-muted text-center">No comments available.</p>';
+                                                        }
                                     
                                                         postsHtml += `
                                                             <div class="card mb-3 post-card" style="max-width: 540px; margin: auto;">
@@ -793,22 +862,25 @@ $(document).ready(function() {
                                                                         `<video controls class="w-100 rounded mb-3 full-width-media">
                                                                             <source src="../../public/lib/images/posts/${post.file_name}" type="video/mp4">
                                                                             Your browser does not support the video tag.
-                                                                        </video>`
+                                                                        </video>` 
                                                                     : post.file_type === 'audio/mpeg' || post.file_type === 'audio/wav' ? 
                                                                         `<audio controls class="w-100 rounded mb-3 full-width-media">
                                                                             <source src="../../public/lib/images/posts/${post.file_name}" type="${post.file_type}">
                                                                             Your browser does not support the audio element.
-                                                                        </audio>`
-                                                                        : post.file_name && 
-                                                                        (post.file_type === 'application/pdf' || 
-                                                                        post.file_type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' || 
-                                                                        post.file_type === 'application/vnd.openxmlformats-officedocument.presentationml.presentation') ?
-                                                                        `<a href="../../public/lib/images/posts/${post.file_name}"target="_blank" class="btn btn-link">${post.file_name.replace(/^\d+_/, '')}</a>`
+                                                                        </audio>` 
+                                                                    : post.file_name && (post.file_type === 'application/pdf' || post.file_type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' || post.file_type === 'application/vnd.openxmlformats-officedocument.presentationml.presentation') ?
+                                                                        `<a href="../../public/lib/images/posts/${post.file_name}" target="_blank" class="btn btn-link" style="text-decoration: none;">
+                                                                            <i class="fas fa-download"></i> ${post.file_name.replace(/^\d+_/, '')}
+                                                                        </a>`
                                                                     : post.file_name ? 
                                                                         `<p class="mb-0">
-                                                                            <a href="../../public/lib/images/posts/${post.file_name}" target="_blank" class="btn btn-link">Download File</a>
-                                                                        </p>`
-                                                                    : ''}
+                                                                            <a href="../../public/lib/images/posts/${post.file_name}" target="_blank" class="btn btn-link" style="text-decoration: none;">
+                                                                                <i class="fas fa-download"></i> ${post.file_name.replace(/^\d+_/, '')}</a>
+                                                                        </p>` : ''}
+                                    
+                                                                    <button class="btn btn-outline-primary" onclick="openCommentSection(${post.post_id})">
+                                                                        <i class="bi bi-chat-left-text"></i> Comment
+                                                                    </button>
                                                                     ${post.u_id == currentUserId ? `
                                                                         <div class="dropdown position-absolute top-0 end-0 p-2">
                                                                             <i class="bi bi-three-dots mr-3" style="font-size: 20px;" data-bs-toggle="dropdown" aria-expanded="false"></i>
@@ -818,6 +890,13 @@ $(document).ready(function() {
                                                                             </ul>
                                                                         </div>
                                                                     ` : ''}
+                                                                    <hr>
+                                                                    <div class="card mb-3 comment-card" style="max-width: 540px; margin: auto;">
+                                                                        <!-- Display Comments -->
+                                                                        <div class="comments-list">
+                                                                            ${commentsHtml}
+                                                                        </div>
+                                                                    </div>
                                                                 </div>
                                                             </div>
                                                         `;
@@ -854,7 +933,50 @@ $(document).ready(function() {
                                         $('#postContainer').html('<p class="text-danger">Invalid Post ID.</p>');
                                         return;
                                     }
-                                
+                                    
+                                    function openCommentSection(postId) {
+                                        const commentText = prompt("Enter your comment:");
+                                    
+                                        if (commentText) {
+                                            const currentUserId = $('meta[name="current-user-id"]').attr('content');
+                                    
+                                            $.ajax({
+                                                url: '/edma/src/controller/add_comment.php',
+                                                type: 'POST',
+                                                dataType: 'json',
+                                                data: {
+                                                    post_id: postId,
+                                                    user_id: currentUserId,
+                                                    comment_text: commentText
+                                                },
+                                                success: function(response) {
+                                                    if (response.status === 'success') {
+                                                        const commentHtml = `
+                                                            <div class="card-body d-flex">
+                                                                <img src="../../public/lib/images/user_profile/${response.comment.image_name}" alt="User" class="img-fluid rounded-circle me-3" style="width: 40px; height: 40px;">
+                                                                <div>
+                                                                    <h6 class="card-title mb-1">You</h6>
+                                                                    <small class="text-muted d-block">${response.comment.created_at}</small>
+                                                                    <p class="card-text mb-0">${response.comment.comment_text}</p>
+                                                                </div>
+                                                            </div>
+                                                        `;
+                                    
+                                                        $(`[data-post-id="${postId}"]`)
+                                                            .closest('.post-card')
+                                                            .find('.comments-list')
+                                                            .append(commentHtml);
+                                                    } else {
+                                                        alert(response.message);
+                                                    }
+                                                },
+                                                error: function(jqXHR, textStatus, errorThrown) {
+                                                    console.error('Error adding comment:', textStatus, errorThrown);
+                                                }
+                                            });
+                                        }
+                                    }
+                                    
                                     // Fetch post data using AJAX
                                     $.ajax({
                                         url: '/edma/src/controller/fetch_single_post.php',
@@ -901,7 +1023,9 @@ $(document).ready(function() {
                                                     );
                                                 } else if (post.file_name) {
                                                     $('#postMedia').html(
-                                                        `<a href="../../public/lib/images/posts/${post.file_name}" target="_blank" class="btn btn-link">Download File</a>`
+                                                        `<a href="../../public/lib/images/posts/${post.file_name}" target="_blank" class="btn btn-link" style="text-decoration: none;">
+                                                            <i class="fas fa-download"></i> ${post.file_name.replace(/^\d+_/, '')}
+                                                        </a>`
                                                     );
                                                 }
                                             } else {
