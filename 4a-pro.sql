@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 02, 2024 at 11:38 AM
+-- Generation Time: Dec 11, 2024 at 11:33 AM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -20,6 +20,33 @@ SET time_zone = "+00:00";
 --
 -- Database: `4a-pro`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `comment`
+--
+
+CREATE TABLE `comment` (
+  `u_id` int(11) NOT NULL,
+  `ui_id` int(11) NOT NULL,
+  `p_id` int(11) NOT NULL,
+  `id` int(11) NOT NULL,
+  `comment` varchar(1000) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `comment`
+--
+
+INSERT INTO `comment` (`u_id`, `ui_id`, `p_id`, `id`, `comment`, `created_at`) VALUES
+(143, 120, 217, 56, 'Gwapaha Jud Oyy', '2024-12-06 23:31:55'),
+(145, 122, 217, 57, 'Thank You moshie ko hehehe', '2024-12-06 23:32:30'),
+(145, 122, 199, 58, 'Nice Song', '2024-12-06 23:34:43'),
+(143, 120, 223, 59, 'Maayo Noun', '2024-12-06 23:37:08'),
+(143, 120, 199, 60, 'Thank You', '2024-12-06 23:51:24'),
+(145, 122, 223, 61, 'hahaha', '2024-12-08 10:32:17');
 
 -- --------------------------------------------------------
 
@@ -42,12 +69,13 @@ CREATE TABLE `posts` (
 --
 
 INSERT INTO `posts` (`u_id`, `ui_id`, `post_id`, `content`, `file_name`, `file_type`, `created_at`) VALUES
-(134, 111, 79, 'My Capela Gameplay, Enjoy', '1732095746_AQNWrChPQiIZJWuVIlbjCX_PyACa8P2rTDAV-pl8CIh-5JVdy7ASg0pw5YvSBjeX4enW2ffDIcfGB-Dn4KroMhsm.mp4', 'video/mp4', '2024-11-20 09:42:26'),
-(136, 113, 80, 'I got Myself In Dunk City Dynasty!! &lt;3', '1732096309_Screenrecording_20240923_001520.mp4', 'video/mp4', '2024-11-20 09:51:49'),
-(136, 113, 83, 'Slam Dunk Opening Anime', 'slamdunk-theme-song-lyrics.mp3', 'audio/mpeg', '2024-11-20 10:10:37'),
-(137, 114, 102, 'Slam Dunk Opening Enjoy Watching', '1732107678_utomp3.com - Slam Dunk  Opening 1 HD.mp4', 'video/mp4', '2024-11-20 13:01:18'),
-(135, 112, 114, 'Slam Dunk Cover', '1732259666_AQMpNk4TXsohG2ykTgAVGqOE7RPX5Gn2MZ_DTNdV0JPPSJuNpPX6cnhUgsJ_dzeKijQ1qXU1kQe-9XzbgsQUL9vs.mp4', 'video/mp4', '2024-11-22 07:14:26'),
-(32, 62, 120, 'Slam Dunk Cover', '1732522055_AQMpNk4TXsohG2ykTgAVGqOE7RPX5Gn2MZ_DTNdV0JPPSJuNpPX6cnhUgsJ_dzeKijQ1qXU1kQe-9XzbgsQUL9vs.mp4', 'video/mp4', '2024-11-25 08:07:35');
+(143, 120, 199, 'Ulan Sa Panalangin Lyrics', '1733285600_y2mate.com - ULAN SA PANALANGIN Bisaya Christian Song with Lyrics.mp3', 'audio/mpeg', '2024-12-04 04:13:20'),
+(149, 126, 206, 'Hello World', '', '', '2024-12-04 15:27:01'),
+(148, 125, 214, 'Hello Breatheren Brothers and Sisters In Christ', '', '', '2024-12-05 08:30:26'),
+(143, 120, 215, 'Phyl Jareth Lamoste Certificate\r\n\r\n', '1733405639_Phyl Jareth A. Lamoste.pdf', 'application/pdf', '2024-12-05 13:33:59'),
+(145, 122, 216, 'Sunday Service Para Ugma', '1733406710_11-30-24.pptx', 'application/vnd.openxmlformats-officedocument.pres', '2024-12-05 13:51:50'),
+(145, 122, 217, 'Its Me', '1733407099_430878108_1097778114802965_8821700676811664314_n.jpg', 'image/jpeg', '2024-12-05 13:58:19'),
+(145, 122, 223, 'Yeey Wala nay errors\r\n', '', '', '2024-12-06 23:36:56');
 
 -- --------------------------------------------------------
 
@@ -70,15 +98,10 @@ CREATE TABLE `user` (
 --
 
 INSERT INTO `user` (`id`, `email`, `password`, `role`, `flag`, `reset_code`, `reset_expires`) VALUES
-(32, 'marjoriesagadsad2019@gmail.com', '$2y$10$MRqMEuYt/yhWB/cjCEc/MusrIy3bVnkYQ4YCjI6gZIIHf.sslYly6', 1, 1, '5bc935a8dbd6', '2024-12-02 18:24:47'),
-(127, 'chordcuyos@gmail.com', '$2y$10$Sh6FHcu8JjGm4z7Yry3UCeXBZja50VdTByXE1/5Dq46w8LP8cL.du', 1, 1, NULL, NULL),
-(128, 'cuyoshope@gmail.com', '$2y$10$AjMbrfsv.Em3QseVkptQaeRSmEsxgDT4Yy62hv45bmX.861hdkqHe', 2, 1, '5b910040087e', '2024-12-02 18:36:18'),
-(134, 'ezzmoneysniper35@gmail.com', '$2y$10$z8WBJZzDRp18tKWBYuGTx.EThXkVc/9Ukx7wPj2FurWlyHckO8MYW', 1, 0, NULL, NULL),
-(135, 'cuyosglorious@gmail.com', '$2y$10$x1XH1NCXc4nLpsa.is94se2IQ4z3pjBoxa7G0nTCJp1szTqqPW9zm', 1, 0, '40775a992563', '2024-12-02 18:32:02'),
-(136, 'jimmybutler@gmail.com', '$2y$10$Z8vrHMqP0EyiH8KBwqr7buAnD1BibFWNqHR5KkUl80wX1a7kbAmse', 1, 1, NULL, NULL),
-(137, 'jirahgracecuyos@gmail.com', '$2y$10$9u7hoT/uRGINBPzjEbfuJuMaPPmO7Ir8jmbdwDdb7kKX58b6eFpaK', 1, 1, NULL, NULL),
-(138, 'rehjicy@gmail.com', '$2y$10$eAf/kpfAgwz7qY2.beWyfeVkJrm3kweoX4m3.kN/lf0xb3i1Qjo3e', 1, 1, NULL, NULL),
-(139, 'LBJ@gmail.com', '$2y$10$YK2FCh4GEwHfHK4nh7T14eryLfNu43Qd9q3943hwBLkDzhAMR.GdW', 1, 1, 'e83c50e231bc', '2024-12-02 17:23:11');
+(143, 'cuyosglorious@gmail.com', '$2y$10$uoYKVVELMzJH.CSTOJsGA.bGiCmyVJfTqzuFEqO9XL2pcOjVRnjF6', 1, 1, NULL, NULL),
+(145, 'marjoriesagadsad2019@gmail.com', '$2y$10$pl2MAOXhDGZDgNycOjBHkORIqU.deAAxdSu.C4V9Y57bgNsC89cWO', 1, 1, NULL, NULL),
+(148, 'jirahgracecuyos@gmail.com', '$2y$10$H1eYeiNnunSK1ItmuRcb5.DLfAgrIjZn2jRnN4hM48/NPLTyFDNfy', 1, 1, NULL, NULL),
+(149, 'rehjicy@gmail.com', '$2y$10$YcrT4Jne5XYn9CHC3vu7cuIgR5uMivbFpza00CyOQKKRbCjRtRnhC', 1, 1, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -104,19 +127,20 @@ CREATE TABLE `user_info` (
 --
 
 INSERT INTO `user_info` (`u_id`, `id`, `name`, `gender`, `birthday`, `address`, `status`, `created`, `updated`, `image_name`) VALUES
-(32, 62, 'Marjorie Lamoste Sagadsad', 'Female', '1998-07-16', 'Pool Bankal Lapu Lapu City', 1, '2024-10-30', '2024-12-02', '32_1733108268_430878108_1097778114802965_8821700676811664314_n.jpg'),
-(127, 104, 'Azariah Chord Cuyos', 'Male', '2018-07-17', 'Babag II Lapu-Lapu City', 1, '2024-11-15', '2024-11-16', '127_1731669687_chordova.jpg'),
-(128, 105, 'Glorious Hope G. Cuyos', 'Male', '2002-07-25', 'Babag II Lapu-Lapu City', 1, '2024-11-15', '2024-12-02', '128_1733104211_378398423_1077007263708298_8678816927246300015_n.jpg'),
-(134, 111, 'Kevin Wayne Durant', 'Male', '1988-09-29', 'Washington Dc', 1, '2024-11-15', '2024-11-20', '134_1732095681_i (1).png'),
-(135, 112, 'Glorious Hope Guillen Cuyos', 'Male', '2002-07-25', 'Babag II Lapu-Lapu City', 1, '2024-11-16', '2024-11-20', '135_1732104906_378398423_1077007263708298_8678816927246300015_n.jpg'),
-(136, 113, 'Jimmy Butler III', 'Male', '1989-09-14', 'Houston, Texas, United States', 1, '2024-11-20', '2024-11-22', '136_1732096060_jimmy-butler-net-worth-3-scaled.jpeg'),
-(137, 114, 'Jirah Grace Guillen Cuyos', 'Female', '1996-10-01', 'Babag II Lapu-Lapu City', 1, '2024-11-20', '2024-11-20', '137_1732106676_grad_pic.jpg'),
-(138, 115, 'Jireh Guillen Cuyos', 'Male', '1988-11-12', 'Babag II Lapu-Lapu City', 1, '2024-11-20', '2024-11-20', 'male.jpg'),
-(139, 116, 'LeBron James degamo', 'Male', '2024-12-01', 'California Usa', 1, '2024-12-02', '2024-12-02', 'male.jpg');
+(143, 120, 'Glorious Hope Guillen Cuyos', 'Male', '2002-07-25', 'Purok Shooting Star Babag II Lapu-Lapu City', 1, '2024-12-04', '2024-12-07', '143_1733285570_378398423_1077007263708298_8678816927246300015_n.jpg'),
+(145, 122, 'Marjorie Lamoste Sagadsad', 'Female', '1999-07-16', 'Pool Bankal Lapu Lapu City', 1, '2024-12-04', '2024-12-05', '145_1733308311_430878108_1097778114802965_8821700676811664314_n.jpg'),
+(148, 125, 'Jirah Grace Guillen Cuyos', 'Male', '1996-10-01', 'Babag II Lapu-Lapu City', 1, '2024-12-04', '2024-12-05', '148_1733387496_grad_pic.jpg'),
+(149, 126, 'Jireh Guillen Cuyos', 'Male', '1989-11-12', 'Babag II Lapu-Lapu City', 1, '2024-12-04', '2024-12-04', '149_1733326006_29790393_1728412197201755_1364142211094449735_n.jpg');
 
 --
 -- Indexes for dumped tables
 --
+
+--
+-- Indexes for table `comment`
+--
+ALTER TABLE `comment`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `posts`
@@ -141,22 +165,28 @@ ALTER TABLE `user_info`
 --
 
 --
+-- AUTO_INCREMENT for table `comment`
+--
+ALTER TABLE `comment`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=62;
+
+--
 -- AUTO_INCREMENT for table `posts`
 --
 ALTER TABLE `posts`
-  MODIFY `post_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=133;
+  MODIFY `post_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=224;
 
 --
 -- AUTO_INCREMENT for table `user`
 --
 ALTER TABLE `user`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=140;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=150;
 
 --
 -- AUTO_INCREMENT for table `user_info`
 --
 ALTER TABLE `user_info`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=117;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=127;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
