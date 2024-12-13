@@ -21,6 +21,12 @@ class adminHandler {
                 case 'getDashboardStats':
                     $controller->getDashboardStats();
                     break;
+                case 'getUserPosts':
+                    $controller->getUserPosts();
+                    break;
+                case 'deletePost':
+                    $controller->deletePost();
+                    break;
                 case 'backupDatabase':
                     $controller->backupDatabase();
                     break;
