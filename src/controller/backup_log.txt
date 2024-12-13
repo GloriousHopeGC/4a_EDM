@@ -1,0 +1,2 @@
+Command: C:^\xampp^\mysql^\bin^\mysqldump.exe --opt -h localhost -u root -p 4a-pro ^> ../../public/lib/backups/4a-pro_backup_2024-12-13_07-40-46.sql
+Command: C:^\xampp^\mysql^\bin^\mysqldump.exe --opt -h localhost -u root -p 4a-pro ^> ../../public/lib/backups/4a-pro_backup_2024-12-13_08-00-19.sql
